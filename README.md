@@ -2,6 +2,8 @@
 
 Aplikasi manajemen penjualan bouquet berbasis web untuk toko bunga.
 
+---
+
 ## 🛠️ Tech Stack
 
 **Frontend:**
@@ -13,13 +15,15 @@ Aplikasi manajemen penjualan bouquet berbasis web untuk toko bunga.
 **Database:**
 - PostgreSQL (Supabase)
 
+---
+
 ## 📁 Struktur Project
 
-```
-bouquet-app/
-├── backend/ # REST API (Node.js + Express)
-└── frontend/ # Web UI (React.js) — coming soon
-```
+    bouquet-app/
+    ├── backend/     # REST API (Node.js + Express)
+    └── frontend/    # Web UI (React.js) — coming soon
+
+---
 
 ## ✅ Progress
 
@@ -47,6 +51,8 @@ bouquet-app/
 - [ ] Login admin
 - [ ] JWT token
 - [ ] Proteksi route
+
+---
 
 ## 👤 Author
 
