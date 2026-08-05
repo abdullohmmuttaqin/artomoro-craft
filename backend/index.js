@@ -5,6 +5,8 @@ const dotenv = require('dotenv');
 // Muat konfigurasi dari file .env
 dotenv.config();
 
+const pool = require('./config/db'); // koneksi database
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
