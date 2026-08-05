@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const pool = require('./config/db'); // koneksi database
+const produkRoutes = require('./routes/produkRoutes'); // routes produk
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -13,6 +14,9 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors());           // izinkan request dari frontend (React)
 app.use(express.json());   // izinkan server baca request body format JSON
+
+// Routes
+app.use('/api/produk', produkRoutes); // semua route produk diawali /api/produk
 
 // Route test — buat cek server jalan
 app.get('/', (req, res) => {
