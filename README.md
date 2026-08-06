@@ -20,8 +20,21 @@ Aplikasi manajemen penjualan bouquet berbasis web untuk toko bunga.
 ## 📁 Struktur Project
 
     bouquet-app/
-    ├── backend/     # REST API (Node.js + Express)
-    └── frontend/    # Web UI (React.js) — coming soon
+    ├── backend/
+    │   ├── config/         # Koneksi database
+    │   ├── controllers/    # Logic bisnis API
+    │   ├── middleware/     # Auth middleware (JWT)
+    │   ├── models/         # Query SQL
+    │   ├── routes/         # Definisi endpoint API
+    │   ├── index.js        # Entry point server
+    │   └── package.json
+    └── frontend/
+        ├── public/
+        └── src/
+            ├── components/ # Komponen UI reusable
+            ├── pages/      # Halaman utama
+            ├── services/   # HTTP request ke API
+            └── App.js      # Root component & routing
 
 ---
 
