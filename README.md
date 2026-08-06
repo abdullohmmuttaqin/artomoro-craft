@@ -48,10 +48,11 @@ Aplikasi manajemen penjualan bouquet berbasis web untuk toko bunga.
 - [x] Status order summary
 - [x] Order terbaru
 
-### Milestone 4 — Authentication (🔜 dalam pengerjaan)
-- [ ] Login admin
-- [ ] JWT token
-- [ ] Proteksi route
+### Milestone 4 — Authentication ✅ SELESAI
+- [x] Login admin
+- [x] JWT token
+- [x] Proteksi route
+- [x] Logout
 
 ---
 
