@@ -5,20 +5,22 @@ const dotenv = require('dotenv');
 // Muat konfigurasi dari file .env
 dotenv.config();
 
-const pool = require('./config/db'); // koneksi database
-const produkRoutes = require('./routes/produkRoutes'); // routes produk
+const pool = require('./config/db');
+const produkRoutes = require('./routes/produkRoutes');
+const orderRoutes = require('./routes/orderRoutes'); // tambahan baru
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());           // izinkan request dari frontend (React)
-app.use(express.json());   // izinkan server baca request body format JSON
+app.use(cors());
+app.use(express.json());
 
 // Routes
-app.use('/api/produk', produkRoutes); // semua route produk diawali /api/produk
+app.use('/api/produk', produkRoutes);
+app.use('/api/orders', orderRoutes); // tambahan baru
 
-// Route test — buat cek server jalan
+// Route test
 app.get('/', (req, res) => {
     res.json({ message: 'Bouquet App API berjalan!' });
 });
