@@ -32,22 +32,23 @@ Aplikasi manajemen penjualan bouquet berbasis web untuk toko bunga.
 - [x] Koneksi PostgreSQL (Supabase)
 - [x] Struktur folder & environment variables
 
-### Milestone 1 — Manajemen Produk Bouquet (🔜 dalam pengerjaan)
-- [ ] CRUD produk bouquet
-- [ ] Kategori bouquet
-- [ ] Search & filter
+### Milestone 1 — Manajemen Produk Bouquet ✅ SELESAI
+- [x] CRUD produk bouquet
+- [x] Kategori bouquet
+- [x] Search & filter
 
-### Milestone 2 — Transaksi & Order
-- [ ] Form order
-- [ ] Status order
-- [ ] Riwayat transaksi
+### Milestone 2 — Transaksi & Order ✅ SELESAI
+- [x] Form order
+- [x] Status order
+- [x] Riwayat transaksi
 
-### Milestone 3 — Dashboard & Laporan
-- [ ] Total pemasukan
-- [ ] Produk terlaris
-- [ ] Grafik penjualan
+### Milestone 3 — Dashboard & Laporan ✅ SELESAI
+- [x] Total pemasukan
+- [x] Produk terlaris
+- [x] Status order summary
+- [x] Order terbaru
 
-### Milestone 4 — Authentication
+### Milestone 4 — Authentication (🔜 dalam pengerjaan)
 - [ ] Login admin
 - [ ] JWT token
 - [ ] Proteksi route
