@@ -9,6 +9,7 @@ const pool = require('./config/db');
 const produkRoutes = require('./routes/produkRoutes');
 const orderRoutes = require('./routes/orderRoutes'); // tambahan baru
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use('/api/produk', produkRoutes);
 app.use('/api/orders', orderRoutes); // tambahan baru
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/auth', authRoutes);
 
 // Route test
 app.get('/', (req, res) => {
