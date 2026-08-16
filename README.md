@@ -18,10 +18,12 @@ Artomoro Craft adalah toko buket dan hantaran eksklusif yang melayani berbagai m
 - React.js
 - CSS Variables (custom brand identity)
 - React Router DOM
+- Axios
 
 **Backend:**
 - Node.js + Express.js
 - JWT Authentication + bcrypt
+- dotenv + nodemon
 
 **Database:**
 - PostgreSQL via Supabase (cloud)
@@ -31,27 +33,47 @@ Artomoro Craft adalah toko buket dan hantaran eksklusif yang melayani berbagai m
 ## 📁 Struktur Project
 
     bouquet-app/
+    ├── .gitignore
+    ├── README.md
     ├── backend/
-    │   ├── config/         # Koneksi database PostgreSQL
-    │   ├── controllers/    # Logic bisnis API
-    │   ├── middleware/     # Auth middleware (JWT)
-    │   ├── models/         # Query SQL
-    │   ├── routes/         # Definisi endpoint API
-    │   ├── index.js        # Entry point server
+    │   ├── config/
+    │   │   └── db.js                   # Koneksi database PostgreSQL
+    │   ├── controllers/
+    │   │   ├── authController.js        # Logic login & JWT
+    │   │   ├── dashboardController.js   # Logic data dashboard
+    │   │   ├── orderController.js       # Logic CRUD order
+    │   │   └── produkController.js      # Logic CRUD produk
+    │   ├── middleware/
+    │   │   └── authMiddleware.js        # Verifikasi JWT token
+    │   ├── models/
+    │   │   ├── orderModel.js            # Query SQL order
+    │   │   └── produkModel.js           # Query SQL produk
+    │   ├── routes/
+    │   │   ├── authRoutes.js            # Endpoint /api/auth
+    │   │   ├── dashboardRoutes.js       # Endpoint /api/dashboard
+    │   │   ├── orderRoutes.js           # Endpoint /api/orders
+    │   │   └── produkRoutes.js          # Endpoint /api/produk
+    │   ├── index.js                     # Entry point server Express
     │   └── package.json
     └── frontend/
         ├── public/
+        │   └── index.html
         └── src/
-            ├── components/ # Komponen reusable (Navbar)
-            ├── pages/      # Halaman aplikasi
-            │   ├── LandingPage.js    # Beranda customer
-            │   ├── KatalogPage.js    # Katalog produk customer
-            │   ├── DashboardPage.js  # Dashboard admin
-            │   ├── ProdukPage.js     # Manajemen produk admin
-            │   ├── OrderPage.js      # Manajemen order admin
-            │   └── LoginPage.js      # Login admin
-            ├── services/   # HTTP request ke API
-            └── App.js      # Root component & routing
+            ├── components/
+            │   └── Navbar.js            # Navbar customer
+            ├── pages/
+            │   ├── LandingPage.js       # Beranda customer
+            │   ├── KatalogPage.js       # Katalog produk customer
+            │   ├── LoginPage.js         # Login admin
+            │   ├── DashboardPage.js     # Dashboard admin
+            │   ├── ProdukPage.js        # Manajemen produk admin
+            │   └── OrderPage.js         # Manajemen order admin
+            ├── services/
+            │   ├── produkService.js     # HTTP request produk
+            │   └── orderService.js      # HTTP request order
+            ├── App.js                   # Root component & routing
+            ├── index.js                 # Entry point React
+            └── index.css                # CSS Variables brand
 
 ---
 
@@ -123,7 +145,7 @@ Buka browser ke `http://localhost:3000`
 
 ## 👤 Author
 
-**Abd Muttaqin** — [@abdullohmmuttaqin](https://github.com/abdullohmmuttaqin)
+**Abd M Muttaqin** — [@abdullohmmuttaqin](https://github.com/abdullohmmuttaqin)
 
 📱 Instagram: [@artomorocraft.id](https://www.instagram.com/artomorocraft.id/)
 📍 Cilacap, Jawa Tengah
