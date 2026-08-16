@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-ro
 
 // Pages - Customer
 import LandingPage from './pages/LandingPage';
+import KatalogPage from './pages/KatalogPage';
 
 // Pages - Admin
 import LoginPage from './pages/LoginPage';
@@ -36,6 +37,7 @@ function App() {
             <Routes>
                 {/* ===== CUSTOMER ROUTES ===== */}
                 <Route path="/" element={<LandingPage />} />
+                <Route path="/katalog" element={<KatalogPage />} />
 
                 {/* ===== ADMIN ROUTES ===== */}
                 <Route
