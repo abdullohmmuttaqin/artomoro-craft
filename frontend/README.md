@@ -1,70 +1,129 @@
-# Getting Started with Create React App
+# ♛ Artomoro Craft
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+> *Let Your Feelings Blossom*
 
-## Available Scripts
+Aplikasi web e-commerce untuk toko buket & hantaran eksklusif **Artomoro Craft**, Cilacap.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🌸 Tentang
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Artomoro Craft adalah toko buket dan hantaran eksklusif yang melayani berbagai momen spesial seperti wisuda, pernikahan, anniversary, dan ulang tahun. Aplikasi ini dibangun untuk memudahkan pengelolaan produk, order, dan menampilkan katalog kepada customer.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🛠️ Tech Stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**Frontend:**
+- React.js
+- CSS Variables (custom brand identity)
+- React Router DOM
 
-### `npm run build`
+**Backend:**
+- Node.js + Express.js
+- JWT Authentication + bcrypt
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Database:**
+- PostgreSQL via Supabase (cloud)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 📁 Struktur Project
 
-### `npm run eject`
+    bouquet-app/
+    ├── backend/
+    │   ├── config/         # Koneksi database PostgreSQL
+    │   ├── controllers/    # Logic bisnis API
+    │   ├── middleware/     # Auth middleware (JWT)
+    │   ├── models/         # Query SQL
+    │   ├── routes/         # Definisi endpoint API
+    │   ├── index.js        # Entry point server
+    │   └── package.json
+    └── frontend/
+        ├── public/
+        └── src/
+            ├── components/ # Komponen reusable (Navbar)
+            ├── pages/      # Halaman aplikasi
+            │   ├── LandingPage.js    # Beranda customer
+            │   ├── KatalogPage.js    # Katalog produk customer
+            │   ├── DashboardPage.js  # Dashboard admin
+            │   ├── ProdukPage.js     # Manajemen produk admin
+            │   ├── OrderPage.js      # Manajemen order admin
+            │   └── LoginPage.js      # Login admin
+            ├── services/   # HTTP request ke API
+            └── App.js      # Root component & routing
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## ✅ Progress
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 🎨 Redesign E-Commerce ✅ SELESAI
+- [x] Brand identity Artomoro Craft (pink, Georgia font)
+- [x] CSS Variables untuk konsistensi warna
+- [x] Landing Page dengan hero, koleksi, produk unggulan, CTA
+- [x] Katalog Page dengan search & filter kategori
+- [x] Navbar customer (Beranda, Katalog, Pesan Sekarang)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Milestone 1 — Manajemen Produk ✅ SELESAI
+- [x] CRUD produk bouquet
+- [x] Kategori bouquet
+- [x] Search & filter
 
-## Learn More
+### Milestone 2 — Transaksi & Order ✅ SELESAI
+- [x] Form order
+- [x] Status order
+- [x] Riwayat transaksi
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Milestone 3 — Dashboard & Laporan ✅ SELESAI
+- [x] Total pemasukan
+- [x] Produk terlaris
+- [x] Status order summary
+- [x] Order terbaru
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Milestone 4 — Authentication ✅ SELESAI
+- [x] Login admin
+- [x] JWT token
+- [x] Proteksi route
+- [x] Logout
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🚀 Cara Menjalankan
 
-### Analyzing the Bundle Size
+**Backend:**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+    cd backend
+    npm install
+    npm run dev
 
-### Making a Progressive Web App
+**Frontend:**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+    cd frontend
+    npm install
+    npm start
 
-### Advanced Configuration
+Buka browser ke `http://localhost:3000`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+**Admin Panel:** `http://localhost:3000/admin`
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 🌐 Halaman
 
-### `npm run build` fails to minify
+| URL | Keterangan |
+|-----|-----------|
+| `/` | Landing Page (customer) |
+| `/katalog` | Katalog Produk (customer) |
+| `/admin` | Login Admin |
+| `/admin/dashboard` | Dashboard Admin |
+| `/admin/produk` | Manajemen Produk |
+| `/admin/order` | Manajemen Order |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## 👤 Author
+
+**Abd Muttaqin** — [@abdullohmmuttaqin](https://github.com/abdullohmmuttaqin)
+
+📱 Instagram: [@artomorocraft.id](https://www.instagram.com/artomorocraft.id/)
+📍 Cilacap, Jawa Tengah
