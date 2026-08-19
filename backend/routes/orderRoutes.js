@@ -8,19 +8,16 @@ const {
     deleteOrder
 } = require('../controllers/orderController');
 
-// GET /api/orders
-router.get('/', getAllOrders);
+// Import middleware verifikasi JWT
+const { verifyToken } = require('../middleware/authMiddleware');
 
-// GET /api/orders/:id
-router.get('/:id', getOrderById);
-
-// POST /api/orders
-router.post('/', createOrder);
-
-// PUT /api/orders/:id/status
-router.put('/:id/status', updateStatusOrder);
-
-// DELETE /api/orders/:id
-router.delete('/:id', deleteOrder);
+// ===== PROTECTED ROUTES =====
+// Semua endpoint order wajib login
+// Customer order lewat WA, bukan langsung lewat API
+router.get('/', verifyToken, getAllOrders);
+router.get('/:id', verifyToken, getOrderById);
+router.post('/', verifyToken, createOrder);
+router.put('/:id/status', verifyToken, updateStatusOrder);
+router.delete('/:id', verifyToken, deleteOrder);
 
 module.exports = router;

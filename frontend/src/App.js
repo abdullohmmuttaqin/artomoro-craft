@@ -83,7 +83,10 @@ const AdminLayout = ({ admin, onLogout, children }) => {
     return (
         <div>
             <nav style={styles.adminNavbar}>
-                <span style={styles.adminBrand}>♛ Artomoro Craft — Admin</span>
+                <div style={styles.adminBrandGroup}>
+                    <span style={styles.adminBrand}>♛ Artomoro Craft — Admin</span>
+                    <a href="/" style={styles.btnLihatToko}>🌸 Lihat Toko</a>
+                </div>
                 <div style={styles.adminLinks}>
                     <Link to="/admin/dashboard" style={styles.adminLink}>Dashboard</Link>
                     <Link to="/admin/produk" style={styles.adminLink}>Produk</Link>
@@ -112,6 +115,20 @@ const styles = {
         fontSize: '16px',
         fontFamily: 'Georgia, serif',
         fontWeight: 'bold',
+    },
+    adminBrandGroup: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '16px',
+    },
+    btnLihatToko: {
+        background: 'rgba(255,255,255,0.15)',
+        color: 'var(--white)',
+        border: '1px solid rgba(255,255,255,0.5)',
+        padding: '5px 12px',
+        borderRadius: 'var(--radius)',
+        fontSize: '12px',
+        textDecoration: 'none',
     },
     adminLinks: {
         display: 'flex',

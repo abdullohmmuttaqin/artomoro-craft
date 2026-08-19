@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
-    const [menuOpen, setMenuOpen] = useState(false);
-
     return (
         <nav style={styles.navbar}>
             <div style={styles.container}>
@@ -16,12 +14,19 @@ const Navbar = () => {
                     </div>
                 </Link>
 
-                {/* Nav Links */}
+                {/* Nav Links — tombol Admin dihapus dari sini */}
                 <div style={styles.navLinks}>
                     <Link to="/" style={styles.navLink}>Beranda</Link>
                     <Link to="/katalog" style={styles.navLink}>Katalog</Link>
-                    <a href="https://wa.me/628" style={styles.navLink} target="_blank" rel="noreferrer">Pesan Sekarang</a>
-                    <Link to="/admin" style={styles.btnAdmin}>Admin</Link>
+
+                    <a
+                        href="https://wa.me/628"
+                        style={styles.navLink}
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        Pesan Sekarang
+                    </a>
                 </div>
             </div>
         </nav>
@@ -78,16 +83,6 @@ const styles = {
         textDecoration: 'none',
         fontSize: '14px',
         fontWeight: '500',
-        transition: 'color 0.2s',
-    },
-    btnAdmin: {
-        background: 'var(--primary)',
-        color: 'var(--white)',
-        padding: '8px 18px',
-        borderRadius: 'var(--radius)',
-        fontSize: '13px',
-        fontWeight: '600',
-        textDecoration: 'none',
     },
 };
 

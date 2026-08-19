@@ -1,33 +1,27 @@
-import axios from 'axios';
+import api from './api';
 
-const API_URL = 'http://localhost:5000/api/orders';
-
-// Ambil semua order
+// Semua order endpoint protected — pakai api instance dengan token
 export const getAllOrders = async () => {
-    const response = await axios.get(API_URL);
+    const response = await api.get('/api/orders');
     return response.data;
 };
 
-// Ambil satu order by id
 export const getOrderById = async (id) => {
-    const response = await axios.get(`${API_URL}/${id}`);
+    const response = await api.get(`/api/orders/${id}`);
     return response.data;
 };
 
-// Buat order baru
 export const createOrder = async (data) => {
-    const response = await axios.post(API_URL, data);
+    const response = await api.post('/api/orders', data);
     return response.data;
 };
 
-// Update status order
 export const updateStatusOrder = async (id, status) => {
-    const response = await axios.put(`${API_URL}/${id}/status`, { status });
+    const response = await api.put(`/api/orders/${id}/status`, { status });
     return response.data;
 };
 
-// Hapus order
 export const deleteOrder = async (id) => {
-    const response = await axios.delete(`${API_URL}/${id}`);
+    const response = await api.delete(`/api/orders/${id}`);
     return response.data;
 };
