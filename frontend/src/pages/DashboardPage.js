@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 const DashboardPage = () => {
     const [data, setData] = useState(null);
@@ -11,7 +11,7 @@ const DashboardPage = () => {
 
     const fetchDashboard = async () => {
         try {
-            const result = await axios.get('http://localhost:5000/api/dashboard');
+            const result = await api.get('/api/dashboard');
             setData(result.data.data);
         } catch (err) {
             console.error('Gagal memuat dashboard');
