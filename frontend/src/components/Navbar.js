@@ -9,7 +9,7 @@ const Navbar = () => {
                 <Link to="/" style={styles.brand}>
                     <span style={styles.crown}>♛</span>
                     <div>
-                        <div style={styles.brandName}>Artomoro Craft</div>
+                        <div style={styles.brandName}>ArtomoroCraft</div>
                         <div style={styles.tagline}>Let Your Feelings Blossom</div>
                     </div>
                 </Link>

@@ -84,7 +84,7 @@ const AdminLayout = ({ admin, onLogout, children }) => {
         <div>
             <nav style={styles.adminNavbar}>
                 <div style={styles.adminBrandGroup}>
-                    <span style={styles.adminBrand}>♛ Artomoro Craft — Admin</span>
+                    <span style={styles.adminBrand}>♛ ArtomoroCraft — Admin</span>
                     <a href="/" style={styles.btnLihatToko}>🌸 Lihat Toko</a>
                 </div>
                 <div style={styles.adminLinks}>

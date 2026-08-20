@@ -128,11 +128,11 @@ const KatalogPage = () => {
             </div>
             <footer style={styles.footer}>
                 <div style={styles.footerContent}>
-                    <div style={styles.footerBrand}>Artomoro Craft</div>
+                    <div style={styles.footerBrand}>ArtomoroCraft</div>
                     <div style={styles.footerTagline}>Let Your Feelings Blossom</div>
                     <div style={styles.footerInfo}>Cilacap | @artomorocraft.id | Non COD | Pre-Order</div>
                 </div>
-                <div style={styles.footerBottom}>2026 Artomoro Craft. All rights reserved.</div>
+                <div style={styles.footerBottom}>2026 Avanti Dev. All rights reserved.</div>
             </footer>
         </div>
     );

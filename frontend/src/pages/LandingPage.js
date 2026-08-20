@@ -133,7 +133,7 @@ const LandingPage = () => {
             <footer style={styles.footer}>
                 <div className="container" style={styles.footerContent}>
                     <div>
-                        <div style={styles.footerBrand}>♛ Artomoro Craft</div>
+                        <div style={styles.footerBrand}>♛ ArtomoroCraft</div>
                         <div style={styles.footerTagline}>Let Your Feelings Blossom</div>
                     </div>
                     <div style={styles.footerInfo}>
@@ -143,7 +143,7 @@ const LandingPage = () => {
                     </div>
                 </div>
                 <div style={styles.footerBottom}>
-                    2026 Artomoro Craft. All rights reserved.
+                    2026 Avanti Dev. All rights reserved.
                 </div>
             </footer>
         </div>
