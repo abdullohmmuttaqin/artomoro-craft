@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { getAllProduk } from '../services/produkService';
 
@@ -112,14 +113,27 @@ const KatalogPage = () => {
                                             : <span style={styles.stokHabis}>Stok habis</span>
                                         }
                                     </div>
+
+                                    {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                                     <a
-                                    href="https://wa.me/628"
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    style={p.stok > 0 ? styles.btnPesan : styles.btnPesanDisabled}
+                                        href={
+                                            p.stok > 0
+                                                ? `https://wa.me/6282138768551?text=${encodeURIComponent(
+                                                    `Halo ArtomoroCraft, saya mau pesan buket *${p.nama}* harga Rp${parseInt(p.harga).toLocaleString('id-ID')}. Apakah stok masih tersedia?`
+                                                )}`
+                                                : '#'
+                                        }
+                                        target={p.stok > 0 ? '_blank' : '_self'}
+                                        rel="noreferrer"
+                                        style={p.stok > 0 ? styles.btnPesan : styles.btnPesanDisabled}
+                                        onClick={(e) => {
+                                            if (p.stok <= 0) {
+                                                e.preventDefault();
+                                            }
+                                        }}
                                     >
-                                    {p.stok > 0 ? 'Pesan via WhatsApp' : 'Stok Habis'}
-                                </a>
+                                        {p.stok > 0 ? 'Pesan via WhatsApp' : 'Stok Habis'}
+                                    </a>
                             </div>
                             </div>
                             ))}
@@ -132,7 +146,13 @@ const KatalogPage = () => {
                     <div style={styles.footerTagline}>Let Your Feelings Blossom</div>
                     <div style={styles.footerInfo}>Cilacap | @artomorocraft.id | Non COD | Pre-Order</div>
                 </div>
-                <div style={styles.footerBottom}>2026 Avanti Dev. All rights reserved.</div>
+                <div style={styles.footerBottom}>
+                    <span>2026 Avanti Dev. All rights reserved.</span>
+                    <span style={{ margin: '0 8px' }}>|</span>
+                    <Link to="/admin" style={styles.adminLink}>
+                        Login Admin
+                    </Link>
+                </div>
             </footer>
         </div>
     );
@@ -347,6 +367,12 @@ const styles = {
         textAlign: 'center',
         fontSize: '12px',
         color: 'rgba(255,255,255,0.4)',
+    },
+    adminLink: {
+        color: 'rgba(255,255,255,0.5)',
+        textDecoration: 'none',
+        fontSize: '12px',
+        transition: 'color 0.2s ease',
     },
 };
 
