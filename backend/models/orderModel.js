@@ -27,9 +27,33 @@ const getOrderById = async (id) => {
 const createOrder = async (nama_pembeli, no_telepon, alamat, catatan, total, items) => {
     const client = await pool.connect();
     try {
-        await client.query('BEGIN'); // mulai transaksi
+        await client.query('BEGIN');
 
-        // Insert ke tabel orders
+        // Cek stok semua item SEBELUM insert apapun
+        // Kalau salah satu item stoknya kurang, batalkan semua
+        for (const item of items) {
+            const cekStok = await client.query(
+                'SELECT stok, nama FROM produk WHERE id = $1',
+                [item.produk_id]
+            );
+
+            // Produk tidak ditemukan
+            if (cekStok.rows.length === 0) {
+                throw new Error(`Produk dengan id ${item.produk_id} tidak ditemukan`);
+            }
+
+            const stokTersedia = cekStok.rows[0].stok;
+            const namaProduk = cekStok.rows[0].nama;
+
+            // Stok tidak cukup
+            if (item.jumlah > stokTersedia) {
+                throw new Error(
+                    `Stok ${namaProduk} tidak cukup. Tersedia: ${stokTersedia}, diminta: ${item.jumlah}`
+                );
+            }
+        }
+
+        // Semua stok aman — lanjut insert order
         const orderResult = await client.query(
             `INSERT INTO orders (nama_pembeli, no_telepon, alamat, catatan, total)
              VALUES ($1, $2, $3, $4, $5) RETURNING *`,
@@ -52,10 +76,10 @@ const createOrder = async (nama_pembeli, no_telepon, alamat, catatan, total, ite
             );
         }
 
-        await client.query('COMMIT'); // simpan semua perubahan
+        await client.query('COMMIT');
         return orderResult.rows[0];
     } catch (error) {
-        await client.query('ROLLBACK'); // batalkan semua kalau ada error
+        await client.query('ROLLBACK');
         throw error;
     } finally {
         client.release();
