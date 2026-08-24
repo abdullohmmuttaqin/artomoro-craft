@@ -2,19 +2,26 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Flower2, ShoppingBag, Menu, X } from 'lucide-react';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Jika sedang berada di Halaman Admin, Sembunyikan Navbar Customer Ini!
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   return (
-    <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-[#FBFBFB]/85 border-b border-pink-100/60 transition-all">
+    <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-[#FBFBFB]/90 border-b-2 border-[#FF4696]/20 shadow-sm transition-all">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           
-          {/* Logo & Brand Name - Sinkron dengan Logo Asli */}
+          {/* Logo & Brand Name */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#1E1033] flex items-center justify-center text-[#FF4696] shadow-sm group-hover:scale-105 transition-transform duration-200">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#1E1033] flex items-center justify-center text-[#FF4696] shadow-md group-hover:scale-105 transition-transform duration-200">
               <Flower2 className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div className="flex flex-col">
@@ -55,17 +62,16 @@ export default function Navbar() {
             </Link>
           </nav>
 
-          {/* Action Button & Mobile Menu Toggle */}
+          {/* Action Button */}
           <div className="flex items-center gap-3">
             <Link
               href="/katalog"
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#FF4696] text-white text-xs font-bold tracking-wide uppercase hover:bg-[#e03a83] active:scale-95 transition-all shadow-sm"
+              className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#FF4696] text-white text-xs font-bold tracking-wide uppercase hover:bg-[#e03a83] active:scale-95 transition-all shadow-md shadow-pink-200"
             >
               <ShoppingBag className="w-4 h-4" />
               <span>Pesan Sekarang</span>
             </Link>
 
-            {/* Mobile Hamburger Button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="md:hidden p-2 rounded-xl text-[#1E1033] hover:bg-pink-50 transition-colors"
@@ -78,44 +84,23 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Dropdown */}
       {isOpen && (
-        <div className="md:hidden bg-[#FBFBFB] border-b border-pink-100 px-4 pt-3 pb-6 space-y-3 animate-in slide-in-from-top-2 duration-200">
-          <Link
-            href="/"
-            onClick={() => setIsOpen(false)}
-            className="block px-3 py-2 rounded-lg text-sm font-semibold uppercase tracking-wide text-[#1E1033] hover:bg-pink-50 hover:text-[#FF4696] transition-colors"
-          >
+        <div className="md:hidden bg-[#FBFBFB] border-b border-pink-100 px-4 pt-3 pb-6 space-y-3">
+          <Link href="/" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-semibold uppercase text-[#1E1033] hover:bg-pink-50 hover:text-[#FF4696]">
             Beranda
           </Link>
-          <Link
-            href="/katalog"
-            onClick={() => setIsOpen(false)}
-            className="block px-3 py-2 rounded-lg text-sm font-semibold uppercase tracking-wide text-[#1E1033] hover:bg-pink-50 hover:text-[#FF4696] transition-colors"
-          >
+          <Link href="/katalog" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-semibold uppercase text-[#1E1033] hover:bg-pink-50 hover:text-[#FF4696]">
             Katalog Buket
           </Link>
-          <Link
-            href="/#tentang"
-            onClick={() => setIsOpen(false)}
-            className="block px-3 py-2 rounded-lg text-sm font-semibold uppercase tracking-wide text-[#1E1033] hover:bg-pink-50 hover:text-[#FF4696] transition-colors"
-          >
+          <Link href="/#tentang" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-semibold uppercase text-[#1E1033] hover:bg-pink-50 hover:text-[#FF4696]">
             Tentang Kami
           </Link>
-          <Link
-            href="/#kontak"
-            onClick={() => setIsOpen(false)}
-            className="block px-3 py-2 rounded-lg text-sm font-semibold uppercase tracking-wide text-[#1E1033] hover:bg-pink-50 hover:text-[#FF4696] transition-colors"
-          >
+          <Link href="/#kontak" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-semibold uppercase text-[#1E1033] hover:bg-pink-50 hover:text-[#FF4696]">
             Kontak WA
           </Link>
-          
           <div className="pt-2">
-            <Link
-              href="/katalog"
-              onClick={() => setIsOpen(false)}
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#FF4696] text-white text-xs font-bold uppercase tracking-wide shadow-sm"
-            >
+            <Link href="/katalog" onClick={() => setIsOpen(false)} className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#FF4696] text-white text-xs font-bold uppercase">
               <ShoppingBag className="w-4 h-4" />
               <span>Pesan Sekarang</span>
             </Link>
