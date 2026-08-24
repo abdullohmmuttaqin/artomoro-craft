@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { Produk, Kategori } from '@/types';
-import { ShoppingBag, Sparkles, Filter, MessageSquare, AlertCircle } from 'lucide-react';
+import { ShoppingBag, Sparkles, Filter, MessageSquare, AlertCircle, Eye } from 'lucide-react';
 
 export default function KatalogPage() {
   const [produkList, setProdukList] = useState<Produk[]>([]);
@@ -162,9 +162,6 @@ export default function KatalogPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
             {filteredProduk.map((item) => {
               const itemNama = (item as any).nama || item.nama_produk || 'Buket Unnamed';
-              const waMessage = encodeURIComponent(
-                `Halo Artomoro Craft, saya mau pesan buket:\n\n*Nama Buket:* ${itemNama}\n*Harga:* ${formatRupiah(item.harga)}\n\nMohon informasi ketersediaan dan alur pemesanannya ya.`
-              );
 
               return (
                 <div
@@ -172,33 +169,37 @@ export default function KatalogPage() {
                   className="group bg-white rounded-2xl border border-pink-100 p-4 shadow-sm hover:shadow-md hover:border-pink-200 transition-all flex flex-col justify-between"
                 >
                   <div className="space-y-3">
-                    {/* Image Container Bersih */}
-                    <div className="relative w-full aspect-square rounded-xl bg-pink-50 overflow-hidden flex items-center justify-center border border-pink-100">
-                      {item.gambar_url ? (
-                        /* eslint-disable-next-line @next/next/no-img-element */
-                        <img
-                          src={item.gambar_url}
-                          alt={itemNama}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center text-pink-300 space-y-1">
-                          <ShoppingBag className="w-8 h-8" />
-                          <span className="text-[10px] font-semibold">Artomoro Craft</span>
-                        </div>
-                      )}
+                    {/* Link ke Detail Produk */}
+                    <Link href={`/katalog/${item.id}`} className="block">
+                      <div className="relative w-full aspect-square rounded-xl bg-pink-50 overflow-hidden flex items-center justify-center border border-pink-100">
+                        {item.gambar_url ? (
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img
+                            src={item.gambar_url}
+                            alt={itemNama}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center text-pink-300 space-y-1">
+                            <ShoppingBag className="w-8 h-8" />
+                            <span className="text-[10px] font-semibold">Artomoro Craft</span>
+                          </div>
+                        )}
 
-                      {/* Stock Badge */}
-                      <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-lg bg-white/90 backdrop-blur-md text-[10px] font-bold text-[#1E1033] shadow-sm">
-                        Stok: {item.stok}
-                      </span>
-                    </div>
+                        {/* Stock Badge */}
+                        <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-lg bg-white/90 backdrop-blur-md text-[10px] font-bold text-[#1E1033] shadow-sm">
+                          Stok: {item.stok}
+                        </span>
+                      </div>
+                    </Link>
 
                     {/* Product Info */}
                     <div className="space-y-1">
-                      <h3 className="font-heading-serif text-lg font-bold text-[#1E1033] tracking-wide uppercase line-clamp-1">
-                        {itemNama}
-                      </h3>
+                      <Link href={`/katalog/${item.id}`} className="block">
+                        <h3 className="font-heading-serif text-lg font-bold text-[#1E1033] tracking-wide uppercase line-clamp-1 hover:text-[#FF4696] transition-colors">
+                          {itemNama}
+                        </h3>
+                      </Link>
                       <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed min-h-[2rem]">
                         {item.deskripsi || 'Rangkaian buket kustom spesial dari bahan pilihan berkualitas.'}
                       </p>
@@ -215,13 +216,11 @@ export default function KatalogPage() {
                     </div>
 
                     <Link
-                      href={`https://wa.me/6281234567890?text=${waMessage}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#FF4696] text-white text-xs font-bold tracking-wide uppercase hover:bg-[#e03a83] active:scale-95 transition-all shadow-sm"
+                      href={`/katalog/${item.id}`}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-pink-50 border border-pink-200 text-[#FF4696] text-xs font-bold tracking-wide uppercase hover:bg-[#FF4696] hover:text-white active:scale-95 transition-all shadow-sm"
                     >
-                      <ShoppingBag className="w-3.5 h-3.5" />
-                      <span>Pesan</span>
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Detail</span>
                     </Link>
                   </div>
 
