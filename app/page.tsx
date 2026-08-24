@@ -3,7 +3,7 @@ import { Flower2, ShoppingBag, ShieldCheck, Sparkles } from 'lucide-react';
 export default function HomePage() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 bg-[#FBFBFB]">
-      {/* Hero Container - Responsive Mobile to Desktop */}
+      {/* Hero Container */}
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-sm border border-pink-100 p-6 sm:p-10 text-center space-y-6">
         
         {/* Badge Brand */}
@@ -12,9 +12,12 @@ export default function HomePage() {
           <span>ArtomoroCraft V2 Engine Ready</span>
         </div>
 
-        {/* Title */}
-        <h1 className="text-3xl sm:text-5xl font-bold text-[#1E1033] tracking-tight leading-tight">
-          Let Your Feelings <span className="text-[#FF4696]">Blossom</span>
+        {/* Title berdasar Logo Asli */}
+        <h1 className="font-heading-serif text-3xl sm:text-5xl font-bold text-[#1E1033] tracking-wider leading-tight uppercase">
+          Let Your Feelings <br />
+          <span className="font-brand-script text-4xl sm:text-6xl text-[#FF4696] normal-case block mt-1">
+            Blossom
+          </span>
         </h1>
 
         {/* Subtitle */}
