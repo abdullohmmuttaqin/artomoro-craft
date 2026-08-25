@@ -1,14 +1,16 @@
 // Tipe Data Kategori Buket
 export interface Kategori {
   id: number;
-  nama_kategori: string;
+  nama?: string;
+  nama_kategori?: string;
   created_at?: string;
 }
 
 // Tipe Data Produk Buket
 export interface Produk {
   id: number;
-  nama_produk: string;
+  nama?: string;
+  nama_produk?: string;
   deskripsi?: string;
   harga: number;
   stok: number;
