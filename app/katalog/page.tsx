@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { Produk, Kategori } from '@/types';
 import { ShoppingBag, Sparkles, Filter, MessageSquare, AlertCircle, Eye, Search, X } from 'lucide-react';
+
+const getProductName = (item: Produk) => (item.nama ?? item.nama_produk ?? 'Buket Unnamed').trim();
+const getCategoryName = (kategori: Kategori) => (kategori.nama ?? kategori.nama_kategori ?? `Kategori #${kategori.id}`).trim();
 
 export default function KatalogPage() {
   const [produkList, setProdukList] = useState<Produk[]>([]);
@@ -21,6 +24,12 @@ export default function KatalogPage() {
   // Fetch Data Produk & Kategori dari Supabase
   useEffect(() => {
     async function fetchData() {
+      if (!isSupabaseConfigured || !supabase) {
+        setLoading(false);
+        setErrorMsg('Konfigurasi Supabase belum siap. Silakan isi NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY di .env.local.');
+        return;
+      }
+
       try {
         setLoading(true);
         setErrorMsg(null);
@@ -56,7 +65,7 @@ export default function KatalogPage() {
 
   // Filter Kombinasi: Kategori + Search Query + Price Range
   const filteredProduk = produkList.filter((item) => {
-    const itemNama = ((item as any).nama || item.nama_produk || '').toLowerCase();
+    const itemNama = getProductName(item).toLowerCase();
     const itemDeskripsi = (item.deskripsi || '').toLowerCase();
     const query = searchQuery.toLowerCase().trim();
 
@@ -179,7 +188,7 @@ export default function KatalogPage() {
                     : 'bg-gray-50 border border-gray-200 text-gray-700 hover:border-pink-300'
                 }`}
               >
-                {(cat as any).nama || cat.nama_kategori || `Kategori #${cat.id}`}
+                {getCategoryName(cat)}
               </button>
             ))}
           </div>
@@ -259,7 +268,7 @@ export default function KatalogPage() {
         {!loading && !errorMsg && filteredProduk.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
             {filteredProduk.map((item) => {
-              const itemNama = (item as any).nama || item.nama_produk || 'Buket Unnamed';
+              const itemNama = getProductName(item);
 
               return (
                 <div

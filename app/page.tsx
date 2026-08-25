@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { WHATSAPP_NUMBER } from '@/lib/supabase';
 import { 
   ShoppingBag, MessageSquare, Sparkles, MapPin, 
   Scissors, Truck, Flower2, X, Send, Heart, Banknote, User, Phone, FileText,
@@ -34,7 +35,7 @@ export default function HomePage() {
     text += `*Detail Buket Kustom:* "${formData.deskripsi}"\n\n`;
     text += `Mohon info estimasi pengerjaan dan konsultasi desainnya ya!`;
 
-    const waUrl = `https://wa.me/083847670338?text=${encodeURIComponent(text)}`;
+    const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
     window.open(waUrl, '_blank');
     setIsModalOpen(false);
     setFormData({ nama: '', whatsapp: '', budget: '', deskripsi: '' });

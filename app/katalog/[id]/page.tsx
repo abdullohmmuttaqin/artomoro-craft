@@ -2,12 +2,14 @@
 
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured, WHATSAPP_NUMBER } from '@/lib/supabase';
 import { Produk } from '@/types';
 import { 
   ArrowLeft, ShoppingBag, Sparkles, CheckCircle2, 
   AlertCircle, RefreshCw, Plus, Minus, MessageSquare, Package
 } from 'lucide-react';
+
+const getProductName = (item: Produk) => (item.nama ?? item.nama_produk ?? 'Buket Unnamed').trim();
 
 interface DetailPageProps {
   params: Promise<{ id: string }>;
@@ -29,6 +31,12 @@ export default function DetailProdukPage({ params }: DetailPageProps) {
   // Fetch Detail Produk dari Supabase berdasarkan ID
   useEffect(() => {
     async function fetchProdukDetail() {
+      if (!isSupabaseConfigured || !supabase) {
+        setLoading(false);
+        setErrorMsg('Konfigurasi Supabase belum siap. Silakan isi NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY di .env.local.');
+        return;
+      }
+
       try {
         setLoading(true);
         setErrorMsg(null);
@@ -67,7 +75,7 @@ export default function DetailProdukPage({ params }: DetailPageProps) {
 
   // Hitung total harga
   const totalHarga = produk ? produk.harga * jumlah : 0;
-  const itemNama = produk ? ((produk as any).nama || produk.nama_produk || 'Buket Unnamed') : '';
+  const itemNama = produk ? getProductName(produk) : '';
 
   // Format Pesan WhatsApp
   const generateWaMessage = () => {

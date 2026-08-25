@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { Produk, Kategori } from '@/types';
 import { 
   Plus, Trash2, Package, Layers, Sparkles, RefreshCw, 
@@ -35,6 +35,12 @@ export default function AdminPage() {
 
   // Fetch Data dari Supabase
   const fetchData = async () => {
+    if (!isSupabaseConfigured || !supabase) {
+      setLoading(false);
+      setErrorMsg('Konfigurasi Supabase belum siap. Silakan isi NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY di .env.local.');
+      return;
+    }
+
     try {
       setLoading(true);
       setErrorMsg(null);
@@ -105,6 +111,11 @@ export default function AdminPage() {
       return;
     }
 
+    if (!isSupabaseConfigured || !supabase) {
+      setErrorMsg('Konfigurasi Supabase belum siap. Silakan isi NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY di .env.local.');
+      return;
+    }
+
     try {
       setSubmitting(true);
 
@@ -171,6 +182,11 @@ export default function AdminPage() {
   // Hapus Produk
   const handleDelete = async (id: number, itemNama: string) => {
     if (!confirm(`Apakah kamu yakin ingin menghapus buket "${itemNama}"?`)) return;
+
+    if (!isSupabaseConfigured || !supabase) {
+      setErrorMsg('Konfigurasi Supabase belum siap. Silakan isi NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY di .env.local.');
+      return;
+    }
 
     try {
       setErrorMsg(null);
