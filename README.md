@@ -1,151 +1,112 @@
-# ♛ Artomoro Craft
+# ♛ Artomoro Craft V2
 
 > *Let Your Feelings Blossom*
 
-Aplikasi web e-commerce untuk toko buket & hantaran eksklusif **Artomoro Craft**, Cilacap.
+Aplikasi web e-commerce & katalog interaktif untuk toko buket & hantaran eksklusif **Artomoro Craft**, Cilacap.
 
 ---
 
-## 🌸 Tentang
+## 🌸 Tentang Project
 
-Artomoro Craft adalah toko buket dan hantaran eksklusif yang melayani berbagai momen spesial seperti wisuda, pernikahan, anniversary, dan ulang tahun. Aplikasi ini dibangun untuk memudahkan pengelolaan produk, order, dan menampilkan katalog kepada customer.
-
----
-
-## 🛠️ Tech Stack
-
-**Frontend:**
-- React.js
-- CSS Variables (custom brand identity)
-- React Router DOM
-- Axios
-
-**Backend:**
-- Node.js + Express.js
-- JWT Authentication + bcrypt
-- dotenv + nodemon
-
-**Database:**
-- PostgreSQL via Supabase (cloud)
+**Artomoro Craft V2** adalah platform e-commerce buket pita satin dan hantaran eksklusif. Aplikasi ini dibangun dengan standar arsitektur modern Next.js App Router untuk menghadirkan pengalaman belanja yang cepat, responsif, dan terintegrasi langsung dengan format pemesanan WhatsApp.
 
 ---
 
-## 📁 Struktur Project
+## 🛠️ Tech Stack Modern
 
-    bouquet-app/
-    ├── .gitignore
-    ├── README.md
-    ├── backend/
-    │   ├── config/
-    │   │   └── db.js                   # Koneksi database PostgreSQL
-    │   ├── controllers/
-    │   │   ├── authController.js        # Logic login & JWT
-    │   │   ├── dashboardController.js   # Logic data dashboard
-    │   │   ├── orderController.js       # Logic CRUD order
-    │   │   └── produkController.js      # Logic CRUD produk
-    │   ├── middleware/
-    │   │   └── authMiddleware.js        # Verifikasi JWT token
-    │   ├── models/
-    │   │   ├── orderModel.js            # Query SQL order
-    │   │   └── produkModel.js           # Query SQL produk
-    │   ├── routes/
-    │   │   ├── authRoutes.js            # Endpoint /api/auth
-    │   │   ├── dashboardRoutes.js       # Endpoint /api/dashboard
-    │   │   ├── orderRoutes.js           # Endpoint /api/orders
-    │   │   └── produkRoutes.js          # Endpoint /api/produk
-    │   ├── index.js                     # Entry point server Express
-    │   └── package.json
-    └── frontend/
-        ├── public/
-        │   └── index.html
-        └── src/
-            ├── components/
-            │   └── Navbar.js            # Navbar customer
-            ├── pages/
-            │   ├── LandingPage.js       # Beranda customer
-            │   ├── KatalogPage.js       # Katalog produk customer
-            │   ├── LoginPage.js         # Login admin
-            │   ├── DashboardPage.js     # Dashboard admin
-            │   ├── ProdukPage.js        # Manajemen produk admin
-            │   └── OrderPage.js         # Manajemen order admin
-            ├── services/
-            │   ├── produkService.js     # HTTP request produk
-            │   └── orderService.js      # HTTP request order
-            ├── App.js                   # Root component & routing
-            ├── index.js                 # Entry point React
-            └── index.css                # CSS Variables brand
+- **Framework:** Next.js 16 (App Router) & TypeScript
+- **Styling:** Tailwind CSS v4 & Lucide React Icons
+- **Database:** Supabase PostgreSQL (Direct Client Connection)
+- **State & Direct Upload:** Base64 Image Processing for Local Uploads
 
 ---
 
-## ✅ Progress
+## 📁 Struktur Project (App Router)
 
-### 🎨 Redesign E-Commerce ✅ SELESAI
-- [x] Brand identity Artomoro Craft (pink, Georgia font)
-- [x] CSS Variables untuk konsistensi warna
-- [x] Landing Page dengan hero, koleksi, produk unggulan, CTA
-- [x] Katalog Page dengan search & filter kategori
-- [x] Navbar customer (Beranda, Katalog, Pesan Sekarang)
+```bash
+bouquet-app/
+├── app/
+│   ├── admin/
+│   │   └── page.tsx           # Management Portal Admin (CRUD Produk & Statistik)
+│   ├── katalog/
+│   │   ├── [id]/
+│   │   │   └── page.tsx       # Detail Produk Dinamis & Form Pemesanan WA
+│   │   └── page.tsx           # Katalog Buket + Search Real-Time & Filter Range Harga
+│   ├── globals.css            # Brand Variables, Styling Tailwind, & Smooth Scroll
+│   ├── layout.tsx             # Root Layout & Navigation Wrapper
+│   └── page.tsx               # Landing Page + Modal Pesanan Kustom + Footer
+├── components/
+│   └── Navbar.tsx             # Responsive Navigation Bar dengan Isolation Rule
+├── lib/
+│   └── supabase.ts            # Client Connection Supabase
+└── types/
+    └── index.ts               # Type Definitions TypeScript
 
-### Milestone 1 — Manajemen Produk ✅ SELESAI
-- [x] CRUD produk bouquet
-- [x] Kategori bouquet
-- [x] Search & filter
-
-### Milestone 2 — Transaksi & Order ✅ SELESAI
-- [x] Form order
-- [x] Status order
-- [x] Riwayat transaksi
-
-### Milestone 3 — Dashboard & Laporan ✅ SELESAI
-- [x] Total pemasukan
-- [x] Produk terlaris
-- [x] Status order summary
-- [x] Order terbaru
-
-### Milestone 4 — Authentication ✅ SELESAI
-- [x] Login admin
-- [x] JWT token
-- [x] Proteksi route
-- [x] Logout
+```
 
 ---
 
-## 🚀 Cara Menjalankan
+## 🌟 Fitur Utama
 
-**Backend:**
+### 🛒 Customer Area
+- **Landing Page Interaktif:** Hero banner eksklusif, section Tentang Kami, Kontak & Jam Operasional, dan Footer responsif dengan ikon resmi Instagram & TikTok.
+- **Modal Pesanan Kustom:** Form pesanan buket kustom di Landing Page yang terformat otomatis langsung ke WhatsApp Admin.
+- **Katalog Real-Time & Filter:** Fitur pencarian produk instan berdasarkan nama dan penyaringan rentang budget (Range Harga).
+- **Detail Produk Dinamis:** Kalkulasi otomatis total harga berdasarkan kuantitas, input catatan kartu ucapan kustom, dan pengarahan otomatis ke WhatsApp.
 
-    cd backend
-    npm install
-    npm run dev
-
-**Frontend:**
-
-    cd frontend
-    npm install
-    npm start
-
-Buka browser ke `http://localhost:3000`
-
-**Admin Panel:** `http://localhost:3000/admin`
+### 🔐 Admin Management Portal (/admin)
+- **Dashboard Summary:** Ringkasan statistik jumlah koleksi produk, estimasi nilai total inventaris, dan produk stok habis.
+- **Upload File Lokal Direct (Base64):** Unggah foto produk dari laptop/HP tanpa ketergantungan API pihak ketiga.
+- **Manajemen Produk (CRUD):** Tambah dan hapus buket dengan tampilan tabel ber-zebra striping yang rapi.
 
 ---
 
-## 🌐 Halaman
+## 🚀 Cara Menjalankan Project
+
+1. Clone Repository & Install Dependencies:
+
+    ```bash
+   git clone https://github.com/abdullohmmuttaqin/artomoro-craft.git
+   cd bouquet-app
+   npm install
+   ```
+
+2. Setup Environment Variables (.env.local):
+
+    ```bash
+   NEXT_PUBLIC_SUPABASE_URL=https://your-supabase-url.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+   ```
+
+3. Jalankan Server Development:
+
+    ```bash
+   npm run dev
+   ```
+
+4. Buka browser ke:
+
+    ```bash
+    http://localhost:3000
+    ```
+
+---
+
+## 🌐 Navigasi Halaman
 
 | URL | Keterangan |
-|-----|-----------|
-| `/` | Landing Page (customer) |
-| `/katalog` | Katalog Produk (customer) |
-| `/admin` | Login Admin |
-| `/admin/dashboard` | Dashboard Admin |
-| `/admin/produk` | Manajemen Produk |
-| `/admin/order` | Manajemen Order |
+| --- | --- |
+| / | Beranda Customer & Form Pesanan Kustom |
+| /katalog | Katalog Buket, Real-Time Search & Range Filter |
+| /katalog/[id] | Detail Buket Dinamis & Opsi Ucapan |
+| /admin | Admin Portal Management (Statistik & Product CRUD) |
 
 ---
 
-## 👤 Author
+## 👤 Author & Branding
 
-**Abd M Muttaqin** — [@abdullohmmuttaqin](https://github.com/abdullohmmuttaqin)
-
-📱 Instagram: [@artomorocraft.id](https://www.instagram.com/artomorocraft.id/)
-📍 Cilacap, Jawa Tengah
+**Abd M Muttaqin** — [@abdullohmmuttaqin](https://github.com/abdullohmmuttaqin)  
+🌐 Portfolio: [portopel.vercel.app](https://portopel.vercel.app/)  
+📱 Instagram: [@artomorocraft.id](https://www.instagram.com/artomorocraft.id/)  
+🎵 TikTok: [@qetcil](https://www.tiktok.com/@qetcil)  
+📍 Cilacap, Jawa Tengah, Indonesia
