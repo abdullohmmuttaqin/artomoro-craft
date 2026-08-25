@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured, WHATSAPP_NUMBER } from '@/lib/supabase';
 import { Produk, Kategori } from '@/types';
 import { ShoppingBag, Sparkles, Filter, MessageSquare, AlertCircle, Eye, Search, X } from 'lucide-react';
 
@@ -252,7 +252,7 @@ export default function KatalogPage() {
                 Reset Filter
               </button>
               <Link
-                href="https://wa.me/6281234567890?text=Halo%20Artomoro%20Craft,%20saya%20ingin%20pesan%20buket%20kustom"
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Halo Artomoro Craft, saya ingin pesan buket kustom')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#FF4696] text-white text-xs font-bold uppercase tracking-wide"

@@ -251,7 +251,7 @@ export default function DetailProdukPage({ params }: DetailPageProps) {
                 </div>
 
                 <Link
-                  href={produk.stok > 0 ? `https://wa.me/6281234567890?text=${generateWaMessage()}` : '#'}
+                  href={produk.stok > 0 ? `https://wa.me/${WHATSAPP_NUMBER}?text=${generateWaMessage()}` : '#'}
                   target={produk.stok > 0 ? '_blank' : '_self'}
                   rel="noopener noreferrer"
                   className={`w-full inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-2xl text-white text-xs font-bold tracking-wide uppercase shadow-md transition-all ${

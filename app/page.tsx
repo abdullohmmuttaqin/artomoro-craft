@@ -251,7 +251,7 @@ export default function HomePage() {
                 </div>
 
                 <Link
-                  href="https://wa.me/083847670338?text=Halo%20Artomoro%20Craft,%20saya%20ingin%20bertanya%20seputar%20pemesanan%20buket"
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Halo Artomoro Craft, saya ingin bertanya seputar pemesanan buket')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto text-center px-4 py-2.5 rounded-xl bg-[#FF4696] text-white text-xs font-bold uppercase hover:bg-[#e03a83] transition-all shadow-sm shrink-0"
