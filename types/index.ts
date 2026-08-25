@@ -1,4 +1,5 @@
 // Tipe Data Kategori Buket
+// Dukungan kompatibel untuk field `nama` atau `nama_kategori` agar data lama dan baru tetap bisa dipakai.
 export interface Kategori {
   id: number;
   nama?: string;
@@ -7,6 +8,7 @@ export interface Kategori {
 }
 
 // Tipe Data Produk Buket
+// Gunakan `nama` sebagai format utama. `nama_produk` tetap dipertahankan sebagai kompatibilitas data lama.
 export interface Produk {
   id: number;
   nama?: string;

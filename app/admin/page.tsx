@@ -106,7 +106,9 @@ export default function AdminPage() {
     setErrorMsg(null);
     setSuccessMsg(null);
 
-    if (!formData.nama || !formData.harga || !formData.stok) {
+    const productName = formData.nama.trim();
+
+    if (!productName || !formData.harga || !formData.stok) {
       setErrorMsg('Nama buket, harga, dan stok wajib diisi!');
       return;
     }
@@ -120,8 +122,7 @@ export default function AdminPage() {
       setSubmitting(true);
 
       const payload: Record<string, any> = {
-        nama: formData.nama,
-        nama_produk: formData.nama,
+        nama: productName,
         harga: parseFloat(formData.harga),
         stok: parseInt(formData.stok, 10),
         deskripsi: formData.deskripsi || null,
@@ -132,9 +133,9 @@ export default function AdminPage() {
         payload.kategori_id = parseInt(formData.kategori_id, 10);
       }
 
-      // Insert pertama dengan kolom 'nama'
+      // Insert pertama dengan kolom 'nama' sebagai format utama.
       let { error } = await supabase.from('produk').insert([{
-        nama: formData.nama,
+        nama: productName,
         harga: payload.harga,
         stok: payload.stok,
         deskripsi: payload.deskripsi,
@@ -142,10 +143,10 @@ export default function AdminPage() {
         kategori_id: payload.kategori_id,
       }]);
 
-      // Fallback jika schema menggunakan 'nama_produk'
+      // Fallback jika schema menggunakan 'nama_produk'.
       if (error && error.code === 'PGRST204') {
         const fallbackRes = await supabase.from('produk').insert([{
-          nama_produk: formData.nama,
+          nama_produk: productName,
           harga: payload.harga,
           stok: payload.stok,
           deskripsi: payload.deskripsi,
