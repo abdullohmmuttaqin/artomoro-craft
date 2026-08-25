@@ -10,6 +10,31 @@ import {
   Tag, Banknote, Hash, UploadCloud, FileText, Flower2, Image as ImageIcon
 } from 'lucide-react';
 
+const getProductName = (item: Produk) => (item.nama ?? item.nama_produk ?? 'Buket Unnamed').trim();
+const getCategoryName = (cat: Kategori) => (cat.nama ?? cat.nama_kategori ?? `Kategori #${cat.id}`).trim();
+
+interface ProductInsertPayload {
+  nama: string;
+  harga: number;
+  stok: number;
+  deskripsi: string | null;
+  gambar_url: string | null;
+  kategori_id?: number;
+}
+
+const getErrorMessage = (err: unknown, fallback: string) => {
+  if (err instanceof Error) return err.message;
+  if (typeof err === 'object' && err !== null) {
+    const maybeMessage = (err as { message?: unknown }).message;
+    if (typeof maybeMessage === 'string' && maybeMessage.trim()) return maybeMessage;
+
+    const maybeDetails = (err as { details?: unknown }).details;
+    if (typeof maybeDetails === 'string' && maybeDetails.trim()) return maybeDetails;
+  }
+
+  return fallback;
+};
+
 export default function AdminPage() {
   const [produkList, setProdukList] = useState<Produk[]>([]);
   const [kategoriList, setKategoriList] = useState<Kategori[]>([]);
@@ -72,7 +97,9 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    fetchData();
+    queueMicrotask(() => {
+      void fetchData();
+    });
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -121,7 +148,7 @@ export default function AdminPage() {
     try {
       setSubmitting(true);
 
-      const payload: Record<string, any> = {
+      const payload: ProductInsertPayload = {
         nama: productName,
         harga: parseFloat(formData.harga),
         stok: parseInt(formData.stok, 10),
@@ -158,7 +185,7 @@ export default function AdminPage() {
 
       if (error) throw error;
 
-      setSuccessMsg(`Berhasil menambahkan buket "${formData.nama}"!`);
+      setSuccessMsg(`Berhasil menambahkan buket "${productName}"!`);
       setFormData({
         nama: '',
         harga: '',
@@ -171,9 +198,9 @@ export default function AdminPage() {
       setIsModalOpen(false);
       fetchData();
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error adding product:', err);
-      const msg = err?.message || err?.details || 'Gagal menyimpan produk baru.';
+      const msg = getErrorMessage(err, 'Gagal menyimpan produk baru.');
       setErrorMsg(msg);
     } finally {
       setSubmitting(false);
@@ -370,7 +397,7 @@ export default function AdminPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {produkList.map((item, index) => {
-                    const itemNama = (item as any).nama || item.nama_produk || 'Buket Unnamed';
+                    const itemNama = getProductName(item);
                     const isEven = index % 2 === 0;
 
                     return (
@@ -566,7 +593,7 @@ export default function AdminPage() {
                   <option value="">-- Tanpa Kategori / Pilih Kategori --</option>
                   {kategoriList.map((cat) => (
                     <option key={cat.id} value={cat.id}>
-                      {(cat as any).nama || (cat as any).nama_kategori || `Kategori #${cat.id}`}
+                      {getCategoryName(cat)}
                     </option>
                   ))}
                 </select>

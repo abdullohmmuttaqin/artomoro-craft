@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { supabase, isSupabaseConfigured, WHATSAPP_NUMBER } from '@/lib/supabase';
 import { Produk } from '@/types';
 import { 
-  ArrowLeft, ShoppingBag, Sparkles, CheckCircle2, 
+  ArrowLeft, Sparkles, CheckCircle2, 
   AlertCircle, RefreshCw, Plus, Minus, MessageSquare, Package
 } from 'lucide-react';
 
