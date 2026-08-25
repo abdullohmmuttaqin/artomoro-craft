@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminAuthError } from '@/lib/admin-auth';
 import { createServerSupabaseClient } from '@/lib/server-supabase';
+import { validateProductPayload } from '@/lib/admin-product-validation';
 
 interface CreateProductBody {
   nama?: string;
@@ -26,15 +27,24 @@ export async function POST(request: NextRequest) {
   }
 
   const nama = (body.nama ?? '').trim();
-  const harga = body.harga;
-  const stok = body.stok;
+  const validationError = validateProductPayload({
+    nama,
+    harga: body.harga,
+    stok: body.stok,
+    deskripsi: body.deskripsi,
+    gambar_url: body.gambar_url,
+    kategori_id: body.kategori_id,
+  });
 
-  if (!nama || typeof harga !== 'number' || typeof stok !== 'number') {
-    return NextResponse.json({ message: 'Nama, harga, dan stok wajib diisi dengan format valid.' }, { status: 400 });
+  if (validationError) {
+    return NextResponse.json({ message: validationError }, { status: 400 });
   }
 
   try {
     const supabase = createServerSupabaseClient();
+
+    const harga = body.harga as number;
+    const stok = body.stok as number;
 
     const payload = {
       nama,

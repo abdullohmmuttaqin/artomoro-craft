@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Produk, Kategori } from '@/types';
+import { MAX_ADMIN_IMAGE_BYTES, validateImageDataUrl } from '@/lib/admin-product-validation';
 import { 
   Plus, Trash2, Package, Layers, Sparkles, RefreshCw, 
   AlertCircle, X, CheckCircle2, ShieldCheck, ArrowLeft,
@@ -154,10 +155,30 @@ export default function AdminPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        setErrorMsg('Format gambar tidak didukung. Gunakan JPG, PNG, atau WEBP.');
+        e.target.value = '';
+        return;
+      }
+
+      if (file.size > MAX_ADMIN_IMAGE_BYTES) {
+        setErrorMsg('Ukuran gambar maksimal 2MB.');
+        e.target.value = '';
+        return;
+      }
+
       // Baca file foto menjadi Data URL (Base64)
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
+        const imageValidationError = validateImageDataUrl(result);
+        if (imageValidationError) {
+          setErrorMsg(imageValidationError);
+          return;
+        }
+
+        setErrorMsg(null);
         setPreviewImage(result);
         setFormData((prev) => ({
           ...prev,
@@ -583,7 +604,7 @@ export default function AdminPage() {
                     <div className="space-y-1 py-2">
                       <UploadCloud className="w-8 h-8 text-[#FF4696] mx-auto" />
                       <p className="font-bold text-gray-700 text-xs">Klik / Ambil Foto Buket dari Device</p>
-                      <p className="text-[10px] text-gray-400">Format foto (PNG, JPG, JPEG, WEBP)</p>
+                      <p className="text-[10px] text-gray-400">Format foto JPG/PNG/WEBP, maksimal 2MB</p>
                     </div>
                   )}
                 </div>
