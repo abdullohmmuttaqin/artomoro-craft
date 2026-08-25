@@ -1,14 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { Produk, Kategori } from '@/types';
 import { 
   Plus, Trash2, Package, Layers, Sparkles, RefreshCw, 
   AlertCircle, X, CheckCircle2, ShieldCheck, ArrowLeft,
   Tag, Banknote, Hash, UploadCloud, FileText, Flower2, Image as ImageIcon
 } from 'lucide-react';
+
+const ADMIN_KEY_HEADER = 'x-admin-key';
+const ADMIN_KEY_STORAGE = 'admin_dashboard_key';
+
+const getStoredAdminKey = () => {
+  if (typeof window === 'undefined') return '';
+  return window.sessionStorage.getItem(ADMIN_KEY_STORAGE) || '';
+};
 
 const getProductName = (item: Produk) => (item.nama ?? item.nama_produk ?? 'Buket Unnamed').trim();
 const getCategoryName = (cat: Kategori) => (cat.nama ?? cat.nama_kategori ?? `Kategori #${cat.id}`).trim();
@@ -38,7 +45,9 @@ const getErrorMessage = (err: unknown, fallback: string) => {
 export default function AdminPage() {
   const [produkList, setProdukList] = useState<Produk[]>([]);
   const [kategoriList, setKategoriList] = useState<Kategori[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [adminKeyInput, setAdminKeyInput] = useState<string>(() => getStoredAdminKey());
+  const [adminKey, setAdminKey] = useState<string>(() => getStoredAdminKey());
+  const [loading, setLoading] = useState<boolean>(() => Boolean(getStoredAdminKey()));
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -58,11 +67,34 @@ export default function AdminPage() {
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  // Fetch Data dari Supabase
-  const fetchData = async () => {
-    if (!isSupabaseConfigured || !supabase) {
+  const callAdminApi = useCallback(async <T,>(path: string, options?: RequestInit): Promise<T> => {
+    if (!adminKey) {
+      throw new Error('Masukkan kunci admin terlebih dahulu.');
+    }
+
+    const response = await fetch(path, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        [ADMIN_KEY_HEADER]: adminKey,
+        ...(options?.headers ?? {}),
+      },
+    });
+
+    const data = (await response.json()) as { message?: string } & T;
+    if (!response.ok) {
+      throw new Error(data.message || 'Permintaan admin gagal diproses.');
+    }
+
+    return data;
+  }, [adminKey]);
+
+  // Fetch Data Admin melalui API Server
+  const fetchData = useCallback(async () => {
+    if (!adminKey) {
       setLoading(false);
-      setErrorMsg('Konfigurasi Supabase belum siap. Silakan isi NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY di .env.local.');
+      setProdukList([]);
+      setKategoriList([]);
       return;
     }
 
@@ -70,37 +102,46 @@ export default function AdminPage() {
       setLoading(true);
       setErrorMsg(null);
 
-      // Fetch Kategori
-      const { data: catData, error: catErr } = await supabase
-        .from('kategori')
-        .select('*');
-
-      if (catErr) throw catErr;
-      if (catData) setKategoriList(catData);
-
-      // Fetch Produk
-      const { data: prodData, error: prodErr } = await supabase
-        .from('produk')
-        .select('*')
-        .order('id', { ascending: false });
-
-      if (prodErr) throw prodErr;
-      if (prodData) setProdukList(prodData);
+      const data = await callAdminApi<{ kategori: Kategori[]; produk: Produk[] }>('/api/admin/bootstrap');
+      setKategoriList(data.kategori || []);
+      setProdukList(data.produk || []);
 
     } catch (err: unknown) {
       console.error('Error loading admin data:', err);
-      const msg = err instanceof Error ? err.message : 'Gagal memuat data dari server Supabase.';
+      const msg = getErrorMessage(err, 'Gagal memuat data admin dari server.');
       setErrorMsg(msg);
     } finally {
       setLoading(false);
     }
-  };
+  }, [adminKey, callAdminApi]);
 
   useEffect(() => {
     queueMicrotask(() => {
       void fetchData();
     });
-  }, []);
+  }, [fetchData]);
+
+  const handleAdminUnlock = () => {
+    const trimmed = adminKeyInput.trim();
+    if (!trimmed) {
+      setErrorMsg('Kunci admin wajib diisi untuk membuka dashboard.');
+      return;
+    }
+
+    window.sessionStorage.setItem(ADMIN_KEY_STORAGE, trimmed);
+    setErrorMsg(null);
+    setAdminKey(trimmed);
+  };
+
+  const handleAdminLock = () => {
+    window.sessionStorage.removeItem(ADMIN_KEY_STORAGE);
+    setAdminKey('');
+    setAdminKeyInput('');
+    setProdukList([]);
+    setKategoriList([]);
+    setIsModalOpen(false);
+    setSuccessMsg('Sesi admin dikunci kembali.');
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -140,8 +181,8 @@ export default function AdminPage() {
       return;
     }
 
-    if (!isSupabaseConfigured || !supabase) {
-      setErrorMsg('Konfigurasi Supabase belum siap. Silakan isi NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY di .env.local.');
+    if (!adminKey) {
+      setErrorMsg('Masukkan kunci admin terlebih dahulu.');
       return;
     }
 
@@ -160,30 +201,10 @@ export default function AdminPage() {
         payload.kategori_id = parseInt(formData.kategori_id, 10);
       }
 
-      // Insert pertama dengan kolom 'nama' sebagai format utama.
-      let { error } = await supabase.from('produk').insert([{
-        nama: productName,
-        harga: payload.harga,
-        stok: payload.stok,
-        deskripsi: payload.deskripsi,
-        gambar_url: payload.gambar_url,
-        kategori_id: payload.kategori_id,
-      }]);
-
-      // Fallback jika schema menggunakan 'nama_produk'.
-      if (error && error.code === 'PGRST204') {
-        const fallbackRes = await supabase.from('produk').insert([{
-          nama_produk: productName,
-          harga: payload.harga,
-          stok: payload.stok,
-          deskripsi: payload.deskripsi,
-          gambar_url: payload.gambar_url,
-          kategori_id: payload.kategori_id,
-        }]);
-        error = fallbackRes.error;
-      }
-
-      if (error) throw error;
+      await callAdminApi<{ message: string }>('/api/admin/products', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
 
       setSuccessMsg(`Berhasil menambahkan buket "${productName}"!`);
       setFormData({
@@ -196,7 +217,7 @@ export default function AdminPage() {
       });
       setPreviewImage(null);
       setIsModalOpen(false);
-      fetchData();
+      void fetchData();
 
     } catch (err: unknown) {
       console.error('Error adding product:', err);
@@ -211,22 +232,19 @@ export default function AdminPage() {
   const handleDelete = async (id: number, itemNama: string) => {
     if (!confirm(`Apakah kamu yakin ingin menghapus buket "${itemNama}"?`)) return;
 
-    if (!isSupabaseConfigured || !supabase) {
-      setErrorMsg('Konfigurasi Supabase belum siap. Silakan isi NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY di .env.local.');
+    if (!adminKey) {
+      setErrorMsg('Masukkan kunci admin terlebih dahulu.');
       return;
     }
 
     try {
       setErrorMsg(null);
-      const { error } = await supabase
-        .from('produk')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      await callAdminApi<{ message: string }>(`/api/admin/products/${id}`, {
+        method: 'DELETE',
+      });
 
       setSuccessMsg(`Berhasil menghapus buket "${itemNama}".`);
-      fetchData();
+      void fetchData();
 
     } catch (err: unknown) {
       console.error('Error deleting product:', err);
@@ -288,7 +306,10 @@ export default function AdminPage() {
 
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <button
-              onClick={fetchData}
+              onClick={() => {
+                void fetchData();
+              }}
+              disabled={!adminKey}
               className="p-3 rounded-xl bg-white border-2 border-pink-100 text-gray-700 hover:border-[#FF4696] hover:text-[#FF4696] transition-all shadow-sm"
               title="Refresh Data"
             >
@@ -301,13 +322,47 @@ export default function AdminPage() {
                 setPreviewImage(null);
                 setIsModalOpen(true);
               }}
+              disabled={!adminKey}
               className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#FF4696] text-white text-xs font-bold tracking-wide uppercase hover:bg-[#e03a83] active:scale-95 transition-all shadow-md shadow-pink-200"
             >
               <Plus className="w-4 h-4" />
               <span>Tambah Buket Baru</span>
             </button>
+
+            {adminKey && (
+              <button
+                onClick={handleAdminLock}
+                className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-gray-200 text-gray-700 text-xs font-bold tracking-wide uppercase hover:border-red-200 hover:text-red-600 transition-all"
+              >
+                Kunci
+              </button>
+            )}
           </div>
         </div>
+
+        {!adminKey && (
+          <div className="p-4 sm:p-5 rounded-2xl bg-amber-50 border-2 border-amber-200 text-amber-900 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+              <div className="flex-1">
+                <p className="text-xs font-bold uppercase tracking-wide">Akses Admin Terkunci</p>
+                <p className="text-xs mt-1">Masukkan kunci admin untuk memuat data dan mengaktifkan operasi CRUD.</p>
+                <input
+                  type="password"
+                  value={adminKeyInput}
+                  onChange={(e) => setAdminKeyInput(e.target.value)}
+                  placeholder="Masukkan ADMIN_DASHBOARD_KEY"
+                  className="mt-3 w-full px-4 py-3 rounded-xl border-2 border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
+                />
+              </div>
+              <button
+                onClick={handleAdminUnlock}
+                className="px-5 py-3 rounded-xl bg-amber-500 text-white text-xs font-bold tracking-wide uppercase hover:bg-amber-600 transition-all"
+              >
+                Buka Dashboard
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Alerts */}
         {errorMsg && (
@@ -354,10 +409,17 @@ export default function AdminPage() {
             </div>
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-gray-400">Koneksi Database</p>
-              <p className="text-xs font-bold text-emerald-600 mt-1 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                Supabase Active
-              </p>
+              {adminKey ? (
+                <p className="text-xs font-bold text-emerald-600 mt-1 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  API Guard Active
+                </p>
+              ) : (
+                <p className="text-xs font-bold text-amber-600 mt-1 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-amber-500" />
+                  Locked
+                </p>
+              )}
             </div>
           </div>
         </div>
