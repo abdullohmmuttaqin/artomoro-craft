@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
   /* Brand Palette ArtomoroCraft V2 */
   --bg-base: #FBFBFB;
