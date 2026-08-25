@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAdminAuthError } from '@/lib/admin-auth';
 import { createServerSupabaseClient } from '@/lib/server-supabase';
 import { validateProductPayload } from '@/lib/admin-product-validation';
+import { enforceAdminRateLimit } from '@/lib/admin-rate-limit';
+import { writeAdminAuditLog } from '@/lib/admin-audit';
 
 interface CreateProductBody {
   nama?: string;
@@ -13,8 +15,26 @@ interface CreateProductBody {
 }
 
 export async function POST(request: NextRequest) {
+  const rateLimit = enforceAdminRateLimit(request, 'admin:products:post');
+  if (!rateLimit.ok) {
+    writeAdminAuditLog(request, {
+      action: 'admin.rate_limited',
+      success: false,
+      details: { retryAfterSeconds: rateLimit.retryAfterSeconds, remaining: rateLimit.remaining, limit: rateLimit.limit },
+    });
+    return NextResponse.json(
+      { message: 'Terlalu banyak request admin. Coba lagi beberapa saat.' },
+      { status: 429, headers: { 'Retry-After': String(rateLimit.retryAfterSeconds) } },
+    );
+  }
+
   const authError = getAdminAuthError(request);
   if (authError) {
+    writeAdminAuditLog(request, {
+      action: 'admin.auth.failed',
+      success: false,
+      details: { reason: authError },
+    });
     return NextResponse.json({ message: authError }, { status: 401 });
   }
 
@@ -37,6 +57,11 @@ export async function POST(request: NextRequest) {
   });
 
   if (validationError) {
+    writeAdminAuditLog(request, {
+      action: 'admin.product.create',
+      success: false,
+      details: { reason: validationError },
+    });
     return NextResponse.json({ message: validationError }, { status: 400 });
   }
 
@@ -73,9 +98,20 @@ export async function POST(request: NextRequest) {
 
     if (error) throw error;
 
+    writeAdminAuditLog(request, {
+      action: 'admin.product.create',
+      success: true,
+      details: { nama, kategoriId: payload.kategori_id },
+    });
+
     return NextResponse.json({ message: 'Produk berhasil dibuat.' }, { status: 201 });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Gagal menambahkan produk.';
+    writeAdminAuditLog(request, {
+      action: 'admin.product.create',
+      success: false,
+      details: { nama, message },
+    });
     return NextResponse.json({ message }, { status: 500 });
   }
 }
