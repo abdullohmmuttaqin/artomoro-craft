@@ -10,14 +10,6 @@ import {
   Tag, Banknote, Hash, UploadCloud, FileText, Flower2, Image as ImageIcon
 } from 'lucide-react';
 
-const ADMIN_KEY_HEADER = 'x-admin-key';
-const ADMIN_KEY_STORAGE = 'admin_dashboard_key';
-
-const getStoredAdminKey = () => {
-  if (typeof window === 'undefined') return '';
-  return window.sessionStorage.getItem(ADMIN_KEY_STORAGE) || '';
-};
-
 const getProductName = (item: Produk) => (item.nama ?? item.nama_produk ?? 'Buket Unnamed').trim();
 const getCategoryName = (cat: Kategori) => (cat.nama ?? cat.nama_kategori ?? `Kategori #${cat.id}`).trim();
 
@@ -46,9 +38,9 @@ const getErrorMessage = (err: unknown, fallback: string) => {
 export default function AdminPage() {
   const [produkList, setProdukList] = useState<Produk[]>([]);
   const [kategoriList, setKategoriList] = useState<Kategori[]>([]);
-  const [adminKeyInput, setAdminKeyInput] = useState<string>(() => getStoredAdminKey());
-  const [adminKey, setAdminKey] = useState<string>(() => getStoredAdminKey());
-  const [loading, setLoading] = useState<boolean>(() => Boolean(getStoredAdminKey()));
+  const [adminKeyInput, setAdminKeyInput] = useState<string>('');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -68,36 +60,33 @@ export default function AdminPage() {
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  const callAdminApi = useCallback(async <T,>(path: string, options?: RequestInit): Promise<T> => {
-    if (!adminKey) {
-      throw new Error('Masukkan kunci admin terlebih dahulu.');
-    }
+  interface ApiError extends Error {
+    status?: number;
+  }
 
+  const callAdminApi = useCallback(async <T,>(path: string, options?: RequestInit): Promise<T> => {
     const response = await fetch(path, {
       ...options,
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        [ADMIN_KEY_HEADER]: adminKey,
         ...(options?.headers ?? {}),
       },
     });
 
     const data = (await response.json()) as { message?: string } & T;
     if (!response.ok) {
-      throw new Error(data.message || 'Permintaan admin gagal diproses.');
+      const apiError: ApiError = new Error(data.message || 'Permintaan admin gagal diproses.');
+      apiError.status = response.status;
+      throw apiError;
     }
 
     return data;
-  }, [adminKey]);
+  }, []);
 
   // Fetch Data Admin melalui API Server
-  const fetchData = useCallback(async () => {
-    if (!adminKey) {
-      setLoading(false);
-      setProdukList([]);
-      setKategoriList([]);
-      return;
-    }
+  const fetchData = useCallback(async (checkSession = false) => {
+    if (!isAuthenticated && !checkSession) return;
 
     try {
       setLoading(true);
@@ -106,37 +95,72 @@ export default function AdminPage() {
       const data = await callAdminApi<{ kategori: Kategori[]; produk: Produk[] }>('/api/admin/bootstrap');
       setKategoriList(data.kategori || []);
       setProdukList(data.produk || []);
+      setIsAuthenticated(true);
 
     } catch (err: unknown) {
+      const typedError = err as ApiError;
+      if (typedError.status === 401) {
+        setIsAuthenticated(false);
+        setProdukList([]);
+        setKategoriList([]);
+        if (checkSession) {
+          setErrorMsg(null);
+          return;
+        }
+        setErrorMsg('Sesi admin tidak valid atau sudah berakhir. Silakan login ulang.');
+        return;
+      }
+
       console.error('Error loading admin data:', err);
       const msg = getErrorMessage(err, 'Gagal memuat data admin dari server.');
       setErrorMsg(msg);
     } finally {
       setLoading(false);
     }
-  }, [adminKey, callAdminApi]);
+  }, [isAuthenticated, callAdminApi]);
 
   useEffect(() => {
     queueMicrotask(() => {
-      void fetchData();
+      void fetchData(true);
     });
   }, [fetchData]);
 
-  const handleAdminUnlock = () => {
+  const handleAdminUnlock = async () => {
     const trimmed = adminKeyInput.trim();
     if (!trimmed) {
       setErrorMsg('Kunci admin wajib diisi untuk membuka dashboard.');
       return;
     }
 
-    window.sessionStorage.setItem(ADMIN_KEY_STORAGE, trimmed);
-    setErrorMsg(null);
-    setAdminKey(trimmed);
+    try {
+      setLoading(true);
+      setErrorMsg(null);
+      await callAdminApi<{ message: string }>('/api/admin/session/login', {
+        method: 'POST',
+        body: JSON.stringify({ key: trimmed }),
+      });
+
+      setIsAuthenticated(true);
+      setSuccessMsg('Sesi admin aktif. Dashboard berhasil dibuka.');
+      void fetchData(true);
+    } catch (err: unknown) {
+      const msg = getErrorMessage(err, 'Gagal login admin.');
+      setErrorMsg(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleAdminLock = () => {
-    window.sessionStorage.removeItem(ADMIN_KEY_STORAGE);
-    setAdminKey('');
+  const handleAdminLock = async () => {
+    try {
+      await callAdminApi<{ message: string }>('/api/admin/session/logout', {
+        method: 'POST',
+      });
+    } catch {
+      // Tetap lanjut lock sisi client walaupun request logout gagal.
+    }
+
+    setIsAuthenticated(false);
     setAdminKeyInput('');
     setProdukList([]);
     setKategoriList([]);
@@ -202,8 +226,8 @@ export default function AdminPage() {
       return;
     }
 
-    if (!adminKey) {
-      setErrorMsg('Masukkan kunci admin terlebih dahulu.');
+    if (!isAuthenticated) {
+      setErrorMsg('Silakan login admin terlebih dahulu.');
       return;
     }
 
@@ -253,8 +277,8 @@ export default function AdminPage() {
   const handleDelete = async (id: number, itemNama: string) => {
     if (!confirm(`Apakah kamu yakin ingin menghapus buket "${itemNama}"?`)) return;
 
-    if (!adminKey) {
-      setErrorMsg('Masukkan kunci admin terlebih dahulu.');
+    if (!isAuthenticated) {
+      setErrorMsg('Silakan login admin terlebih dahulu.');
       return;
     }
 
@@ -330,7 +354,7 @@ export default function AdminPage() {
               onClick={() => {
                 void fetchData();
               }}
-              disabled={!adminKey}
+              disabled={!isAuthenticated}
               className="p-3 rounded-xl bg-white border-2 border-pink-100 text-gray-700 hover:border-[#FF4696] hover:text-[#FF4696] transition-all shadow-sm"
               title="Refresh Data"
             >
@@ -343,14 +367,14 @@ export default function AdminPage() {
                 setPreviewImage(null);
                 setIsModalOpen(true);
               }}
-              disabled={!adminKey}
+              disabled={!isAuthenticated}
               className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#FF4696] text-white text-xs font-bold tracking-wide uppercase hover:bg-[#e03a83] active:scale-95 transition-all shadow-md shadow-pink-200"
             >
               <Plus className="w-4 h-4" />
               <span>Tambah Buket Baru</span>
             </button>
 
-            {adminKey && (
+            {isAuthenticated && (
               <button
                 onClick={handleAdminLock}
                 className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-gray-200 text-gray-700 text-xs font-bold tracking-wide uppercase hover:border-red-200 hover:text-red-600 transition-all"
@@ -361,7 +385,7 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {!adminKey && (
+        {!isAuthenticated && (
           <div className="p-4 sm:p-5 rounded-2xl bg-amber-50 border-2 border-amber-200 text-amber-900 shadow-sm">
             <div className="flex flex-col sm:flex-row sm:items-end gap-3">
               <div className="flex-1">
@@ -371,7 +395,7 @@ export default function AdminPage() {
                   type="password"
                   value={adminKeyInput}
                   onChange={(e) => setAdminKeyInput(e.target.value)}
-                  placeholder="Masukkan ADMIN_DASHBOARD_KEY"
+                  placeholder="Masukkan kunci admin dashboard"
                   className="mt-3 w-full px-4 py-3 rounded-xl border-2 border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
                 />
               </div>
@@ -430,7 +454,7 @@ export default function AdminPage() {
             </div>
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-gray-400">Koneksi Database</p>
-              {adminKey ? (
+              {isAuthenticated ? (
                 <p className="text-xs font-bold text-emerald-600 mt-1 flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   API Guard Active

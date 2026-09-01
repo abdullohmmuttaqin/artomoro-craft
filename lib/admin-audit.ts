@@ -4,6 +4,8 @@ type AdminAuditAction =
   | 'admin.bootstrap'
   | 'admin.product.create'
   | 'admin.product.delete'
+  | 'admin.session.login'
+  | 'admin.session.logout'
   | 'admin.auth.failed'
   | 'admin.rate_limited';
 
