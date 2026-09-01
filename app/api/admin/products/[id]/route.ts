@@ -10,6 +10,7 @@ interface RouteContext {
 }
 
 interface UpdateProductBody {
+  archived?: boolean;
   nama?: string;
   harga?: number;
   stok?: number;
@@ -40,6 +41,10 @@ const getDatabaseErrorMessage = (error: unknown, fallback: string) => {
 
 const isForeignKeyViolation = (error: unknown) => {
   return typeof error === 'object' && error !== null && (error as { code?: unknown }).code === '23503';
+};
+
+const isMissingArchiveColumn = (error: unknown) => {
+  return typeof error === 'object' && error !== null && (error as { code?: unknown }).code === '42703';
 };
 
 export async function PATCH(request: NextRequest, context: RouteContext) {
@@ -104,6 +109,13 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
   try {
     const supabase = createServerSupabaseClient();
+    if (typeof body.archived === 'boolean') {
+      const { error } = await supabase.from('produk').update({ is_active: !body.archived }).eq('id', productId);
+      if (error) throw error;
+      writeAdminAuditLog(request, { action: 'admin.product.update', success: true, details: { productId, archived: body.archived } });
+      return NextResponse.json({ message: body.archived ? 'Produk berhasil diarsipkan.' : 'Produk berhasil dipulihkan.' });
+    }
+
     const { data: existingProduct, error: existingError } = await supabase.from('produk').select('*').eq('id', productId).maybeSingle();
 
     if (existingError) throw existingError;
@@ -136,6 +148,12 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
     return NextResponse.json({ message: 'Produk berhasil diperbarui.' });
   } catch (error: unknown) {
+    if (isMissingArchiveColumn(error)) {
+      const message = 'Fitur arsip belum siap. Jalankan migration supabase/migrations/20260902_add_product_archive.sql terlebih dahulu.';
+      writeAdminAuditLog(request, { action: 'admin.product.update', success: false, details: { productId, reason: 'archive_column_missing' } });
+      return NextResponse.json({ message }, { status: 503 });
+    }
+
     const message = getDatabaseErrorMessage(error, 'Gagal memperbarui produk.');
     writeAdminAuditLog(request, {
       action: 'admin.product.update',

@@ -43,10 +43,17 @@ export default function KatalogPage() {
         if (categories) setKategoriList(categories);
 
         // Fetch Produk
-        const { data: products, error: prodError } = await supabase
+        let { data: products, error: prodError } = await supabase
           .from('produk')
           .select('*')
+          .eq('is_active', true)
           .order('id', { ascending: false });
+
+        if (prodError?.code === '42703') {
+          const legacyProducts = await supabase.from('produk').select('*').order('id', { ascending: false });
+          products = legacyProducts.data;
+          prodError = legacyProducts.error;
+        }
 
         if (prodError) throw prodError;
         if (products) setProdukList(products);

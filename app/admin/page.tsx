@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Produk, Kategori } from '@/types';
 import { MAX_ADMIN_IMAGE_BYTES, validateImageDataUrl } from '@/lib/admin-product-validation';
 import { 
-  Plus, Pencil, Trash2, Package, Layers, Sparkles, RefreshCw,
+  Plus, Pencil, Archive, Trash2, Package, Layers, Sparkles, RefreshCw,
   AlertCircle, X, CheckCircle2, ShieldCheck, ArrowLeft,
   Tag, Banknote, Hash, UploadCloud, FileText, Flower2, Image as ImageIcon
 } from 'lucide-react';
@@ -349,6 +349,23 @@ export default function AdminPage() {
     }
   };
 
+  const handleArchive = async (item: Produk) => {
+    const itemNama = getProductName(item);
+    const archived = item.is_active === false;
+    if (!confirm(`${archived ? 'Pulihkan' : 'Arsipkan'} buket "${itemNama}" ${archived ? 'ke' : 'dari'} katalog publik?`)) return;
+    try {
+      setErrorMsg(null);
+      await callAdminApi<{ message: string }>(`/api/admin/products/${item.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ archived: !archived }),
+      });
+      setSuccessMsg(`Buket "${itemNama}" berhasil ${archived ? 'dipulihkan ke' : 'diarsipkan dari'} katalog publik.`);
+      void fetchData();
+    } catch (err: unknown) {
+      setErrorMsg(getErrorMessage(err, 'Gagal mengarsipkan produk.'));
+    }
+  };
+
   const handleCategorySubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const nama = categoryNameInput.trim();
@@ -653,11 +670,11 @@ export default function AdminPage() {
                     const isEven = index % 2 === 0;
 
                     return (
-                      <tr 
+                      <tr
                         key={item.id} 
-                        className={`transition-colors hover:bg-pink-100/50 ${
+                        className={`transition-colors hover:bg-pink-100/50 ${item.is_active === false ? 'bg-slate-50 opacity-75' : (
                           isEven ? 'bg-white' : 'bg-pink-50/30'
-                        }`}
+                        )}`}
                       >
                         <td className="py-4 px-5">
                           <div className="flex items-center gap-3">
@@ -677,7 +694,10 @@ export default function AdminPage() {
                               )}
                             </div>
                             <div>
-                              <p className="font-bold text-[#1E1033] text-sm uppercase tracking-wide">{itemNama}</p>
+                              <p className="font-bold text-[#1E1033] text-sm uppercase tracking-wide flex items-center gap-2">
+                                {itemNama}
+                                {item.is_active === false && <span className="text-[9px] rounded-md bg-slate-200 px-1.5 py-0.5 text-slate-600">ARSIP</span>}
+                              </p>
                               <p className="text-[11px] text-gray-500 line-clamp-1">{item.deskripsi || 'Rangkaian buket kustom indah'}</p>
                             </div>
                           </div>
@@ -698,6 +718,13 @@ export default function AdminPage() {
                               title="Edit Produk"
                             >
                               <Pencil className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => void handleArchive(item)}
+                              className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
+                              title={item.is_active === false ? 'Pulihkan Produk' : 'Arsipkan Produk'}
+                            >
+                              <Archive className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => handleDelete(item.id, itemNama)}

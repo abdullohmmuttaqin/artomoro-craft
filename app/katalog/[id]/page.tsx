@@ -41,11 +41,18 @@ export default function DetailProdukPage({ params }: DetailPageProps) {
         setLoading(true);
         setErrorMsg(null);
 
-        const { data, error } = await supabase
+        let { data, error } = await supabase
           .from('produk')
           .select('*')
           .eq('id', parseInt(produkId, 10))
+          .eq('is_active', true)
           .single();
+
+        if (error?.code === '42703') {
+          const legacyProduct = await supabase.from('produk').select('*').eq('id', parseInt(produkId, 10)).single();
+          data = legacyProduct.data;
+          error = legacyProduct.error;
+        }
 
         if (error) throw error;
         if (data) setProduk(data);
