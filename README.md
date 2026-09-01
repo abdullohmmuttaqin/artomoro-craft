@@ -1,112 +1,145 @@
-# ♛ Artomoro Craft V2
+# ArtomoroCraft
 
-> *Let Your Feelings Blossom*
+Website katalog dan pemesanan buket ArtomoroCraft, dibangun dengan Next.js App Router dan Supabase.
 
-Aplikasi web e-commerce & katalog interaktif untuk toko buket & hantaran eksklusif **Artomoro Craft**, Cilacap.
+## Fitur
 
----
+### Customer
 
-## 🌸 Tentang Project
+- Beranda brand dengan informasi kontak dan jam operasional.
+- Form pemesanan custom yang menghasilkan pesan WhatsApp.
+- Katalog dengan pencarian, filter kategori, dan filter harga.
+- Halaman detail produk dengan kalkulasi jumlah dan total harga.
+- Produk yang diarsipkan tidak ditampilkan kepada customer.
 
-**Artomoro Craft V2** adalah platform e-commerce buket pita satin dan hantaran eksklusif. Aplikasi ini dibangun dengan standar arsitektur modern Next.js App Router untuk menghadirkan pengalaman belanja yang cepat, responsif, dan terintegrasi langsung dengan format pemesanan WhatsApp.
+### Admin
 
----
+- Login username/password untuk role `admin` atau `founder`.
+- Signed session berbasis HMAC dengan cookie `httpOnly`.
+- CRUD produk dan kategori.
+- Archive dan restore produk yang masih digunakan histori pesanan.
+- Validasi payload produk dan gambar JPG, PNG, atau WEBP maksimal 2 MB.
+- Rate limiting dan audit log untuk aktivitas admin.
+- Foreign key protection agar histori pesanan tidak rusak.
 
-## 🛠️ Tech Stack Modern
+## Tech Stack
 
-- **Framework:** Next.js 16 (App Router) & TypeScript
-- **Styling:** Tailwind CSS v4 & Lucide React Icons
-- **Database:** Supabase PostgreSQL (Direct Client Connection)
-- **State & Direct Upload:** Base64 Image Processing for Local Uploads
+- Next.js 16 App Router
+- TypeScript
+- React 19
+- Tailwind CSS v4
+- Lucide React
+- Supabase PostgreSQL
 
----
+## Struktur Proyek
 
-## 📁 Struktur Project (App Router)
-
-```bash
+```text
 bouquet-app/
 ├── app/
-│   ├── admin/
-│   │   └── page.tsx           # Management Portal Admin (CRUD Produk & Statistik)
-│   ├── katalog/
-│   │   ├── [id]/
-│   │   │   └── page.tsx       # Detail Produk Dinamis & Form Pemesanan WA
-│   │   └── page.tsx           # Katalog Buket + Search Real-Time & Filter Range Harga
-│   ├── globals.css            # Brand Variables, Styling Tailwind, & Smooth Scroll
-│   ├── layout.tsx             # Root Layout & Navigation Wrapper
-│   └── page.tsx               # Landing Page + Modal Pesanan Kustom + Footer
-├── components/
-│   └── Navbar.tsx             # Responsive Navigation Bar dengan Isolation Rule
+│   ├── admin/page.tsx                 # Dashboard admin dan CRUD katalog
+│   ├── api/admin/                     # API session, produk, dan kategori
+│   ├── katalog/page.tsx               # Daftar katalog customer
+│   ├── katalog/[id]/page.tsx          # Detail produk dan pemesanan
+│   ├── globals.css                    # Styling global
+│   ├── layout.tsx                     # Root layout
+│   └── page.tsx                       # Beranda customer
+├── components/Navbar.tsx              # Navigasi responsive
 ├── lib/
-│   └── supabase.ts            # Client Connection Supabase
-└── types/
-    └── index.ts               # Type Definitions TypeScript
-
+│   ├── admin-audit.ts                 # Audit log aktivitas admin
+│   ├── admin-auth.ts                  # Validasi akses berdasarkan role
+│   ├── admin-product-validation.ts    # Validasi produk dan gambar
+│   ├── admin-rate-limit.ts             # Rate limiting endpoint admin
+│   ├── admin-session.ts               # Signed session cookie
+│   ├── server-supabase.ts             # Supabase client server-side
+│   └── supabase.ts                    # Supabase client customer
+├── supabase/migrations/               # Migration database
+├── types/index.ts                     # Shared TypeScript types
+├── .env.example                       # Template environment variables
+├── next.config.ts                     # Konfigurasi Next.js
+├── package.json                       # Script dan dependencies
+└── tsconfig.json                      # Konfigurasi TypeScript
 ```
 
----
+## Environment Variables
 
-## 🌟 Fitur Utama
+Salin `.env.example` menjadi `.env.local`, kemudian isi nilai sebenarnya:
 
-### 🛒 Customer Area
-- **Landing Page Interaktif:** Hero banner eksklusif, section Tentang Kami, Kontak & Jam Operasional, dan Footer responsif dengan ikon resmi Instagram & TikTok.
-- **Modal Pesanan Kustom:** Form pesanan buket kustom di Landing Page yang terformat otomatis langsung ke WhatsApp Admin.
-- **Katalog Real-Time & Filter:** Fitur pencarian produk instan berdasarkan nama dan penyaringan rentang budget (Range Harga).
-- **Detail Produk Dinamis:** Kalkulasi otomatis total harga berdasarkan kuantitas, input catatan kartu ucapan kustom, dan pengarahan otomatis ke WhatsApp.
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_WHATSAPP_NUMBER=6281234567890
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-### 🔐 Admin Management Portal (/admin)
-- **Dashboard Summary:** Ringkasan statistik jumlah koleksi produk, estimasi nilai total inventaris, dan produk stok habis.
-- **Upload File Lokal Direct (Base64):** Unggah foto produk dari laptop/HP tanpa ketergantungan API pihak ketiga.
-- **Manajemen Produk (CRUD):** Tambah dan hapus buket dengan tampilan tabel ber-zebra striping yang rapi.
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=change-this-admin-password
+FOUNDER_USERNAME=founder
+FOUNDER_PASSWORD=change-this-founder-password
 
----
+ADMIN_DASHBOARD_KEY=change-this-admin-key
+FOUNDER_DASHBOARD_KEY=change-this-founder-key
+ADMIN_SESSION_SECRET=change-this-session-secret
+ADMIN_SESSION_TTL_SECONDS=28800
+ADMIN_RATE_LIMIT_MAX=30
+ADMIN_RATE_LIMIT_WINDOW_SECONDS=60
+```
 
-## 🚀 Cara Menjalankan Project
+`SUPABASE_SERVICE_ROLE_KEY`, password, dashboard key, dan session secret hanya boleh berada di server environment. Jangan expose atau commit `.env.local`.
 
-1. Clone Repository & Install Dependencies:
+## Database Migration
 
-    ```bash
-   git clone https://github.com/abdullohmmuttaqin/artomoro-craft.git
-   cd bouquet-app
-   npm install
-   ```
+Untuk mengaktifkan archive produk, jalankan migration berikut di Supabase SQL Editor atau melalui migration workflow Supabase:
 
-2. Setup Environment Variables (.env.local):
+```sql
+alter table public.produk
+  add column if not exists is_active boolean not null default true;
 
-    ```bash
-   NEXT_PUBLIC_SUPABASE_URL=https://your-supabase-url.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-   ```
+create index if not exists produk_is_active_idx on public.produk (is_active);
+```
 
-3. Jalankan Server Development:
+Migration tersimpan di [supabase/migrations/20260902_add_product_archive.sql](supabase/migrations/20260902_add_product_archive.sql).
 
-    ```bash
-   npm run dev
-   ```
+Produk yang sudah direferensikan oleh `order_items` tidak boleh dihapus permanen. Gunakan archive melalui dashboard atau SQL berikut:
 
-4. Buka browser ke:
+```sql
+update public.produk
+set is_active = false
+where id in (1, 2);
+```
 
-    ```bash
-    http://localhost:3000
-    ```
+Archive menyembunyikan produk dari customer tanpa menghapus histori order.
 
----
+## Menjalankan Secara Lokal
 
-## 🌐 Navigasi Halaman
+```bash
+git clone https://github.com/abdullohmmuttaqin/artomoro-craft.git
+cd bouquet-app
+npm install
+npm run dev
+```
 
-| URL | Keterangan |
+Buka [http://localhost:3000](http://localhost:3000).
+
+## Validasi
+
+```bash
+npm run lint
+npm run build
+```
+
+## Route Utama
+
+| Route | Fungsi |
 | --- | --- |
-| / | Beranda Customer & Form Pesanan Kustom |
-| /katalog | Katalog Buket, Real-Time Search & Range Filter |
-| /katalog/[id] | Detail Buket Dinamis & Opsi Ucapan |
-| /admin | Admin Portal Management (Statistik & Product CRUD) |
+| `/` | Beranda customer dan form pesanan custom |
+| `/katalog` | Daftar produk, pencarian, dan filter |
+| `/katalog/[id]` | Detail produk dan pemesanan WhatsApp |
+| `/admin` | Dashboard admin dan manajemen katalog |
 
----
+## Catatan Production
 
-## 👤 Author & Branding
-
-**Abd M Muttaqin** — [@abdullohmmuttaqin](https://github.com/abdullohmmuttaqin)  
-🌐 Portfolio: [portopel.vercel.app](https://portopel.vercel.app/)  
-📱 Instagram: [@artomorocraft.id](https://www.instagram.com/artomorocraft.id/)  
-🎵 TikTok: [@qetcil](https://www.tiktok.com/@qetcil)  
-📍 Cilacap, Jawa Tengah, Indonesia
+- Gunakan password dan secret yang berbeda dari development.
+- Set environment variables melalui secret manager platform deployment.
+- Jalankan database migration sebelum deploy versi archive.
+- Pastikan backup dan recovery Supabase aktif.
+- Rate limiter saat ini berbasis memory proses; untuk multi-instance gunakan storage terdistribusi.
+- Audit log saat ini ditulis ke server log dan sebaiknya diteruskan ke log management production.
