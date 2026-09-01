@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const authError = getAdminAuthError(request);
+  const authError = getAdminAuthError(request, ['admin', 'founder']);
   if (authError) {
     writeAdminAuditLog(request, {
       action: 'admin.auth.failed',

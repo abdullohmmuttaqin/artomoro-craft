@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Produk, Kategori } from '@/types';
 import { MAX_ADMIN_IMAGE_BYTES, validateImageDataUrl } from '@/lib/admin-product-validation';
 import { 
-  Plus, Trash2, Package, Layers, Sparkles, RefreshCw, 
+  Plus, Pencil, Trash2, Package, Layers, Sparkles, RefreshCw,
   AlertCircle, X, CheckCircle2, ShieldCheck, ArrowLeft,
   Tag, Banknote, Hash, UploadCloud, FileText, Flower2, Image as ImageIcon
 } from 'lucide-react';
@@ -39,11 +39,17 @@ export default function AdminPage() {
   const [produkList, setProdukList] = useState<Produk[]>([]);
   const [kategoriList, setKategoriList] = useState<Kategori[]>([]);
   const [adminKeyInput, setAdminKeyInput] = useState<string>('');
+  const [adminUsernameInput, setAdminUsernameInput] = useState<string>('');
+  const [adminPasswordInput, setAdminPasswordInput] = useState<string>('');
+  const [loginRole, setLoginRole] = useState<'admin' | 'founder'>('admin');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [editingProductId, setEditingProductId] = useState<number | null>(null);
+  const [editingCategoryId, setEditingCategoryId] = useState<number | null>(null);
+  const [categoryNameInput, setCategoryNameInput] = useState('');
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -127,21 +133,34 @@ export default function AdminPage() {
 
   const handleAdminUnlock = async () => {
     const trimmed = adminKeyInput.trim();
-    if (!trimmed) {
-      setErrorMsg('Kunci admin wajib diisi untuk membuka dashboard.');
+    const username = adminUsernameInput.trim();
+    const password = adminPasswordInput.trim();
+
+    const hasPasswordLogin = username.length > 0 || password.length > 0;
+    const hasLegacyKey = trimmed.length > 0;
+
+    if (!hasPasswordLogin && !hasLegacyKey) {
+      setErrorMsg('Masukkan username/password atau kunci legacy untuk membuka dashboard.');
       return;
     }
 
     try {
       setLoading(true);
       setErrorMsg(null);
+      const payload = {
+        role: loginRole,
+        ...(hasPasswordLogin
+          ? { username, password }
+          : { key: trimmed }),
+      };
+
       await callAdminApi<{ message: string }>('/api/admin/session/login', {
         method: 'POST',
-        body: JSON.stringify({ key: trimmed }),
+        body: JSON.stringify(payload),
       });
 
       setIsAuthenticated(true);
-      setSuccessMsg('Sesi admin aktif. Dashboard berhasil dibuka.');
+      setSuccessMsg(`Sesi ${loginRole} aktif. Dashboard berhasil dibuka.`);
       void fetchData(true);
     } catch (err: unknown) {
       const msg = getErrorMessage(err, 'Gagal login admin.');
@@ -162,6 +181,8 @@ export default function AdminPage() {
 
     setIsAuthenticated(false);
     setAdminKeyInput('');
+    setAdminUsernameInput('');
+    setAdminPasswordInput('');
     setProdukList([]);
     setKategoriList([]);
     setIsModalOpen(false);
@@ -214,6 +235,27 @@ export default function AdminPage() {
   };
 
   // Submit Form Tambah Produk
+  const openAddModal = () => {
+    setEditingProductId(null);
+    setFormData({ nama: '', harga: '', stok: '', deskripsi: '', gambar_url: '', kategori_id: '' });
+    setPreviewImage(null);
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (item: Produk) => {
+    setEditingProductId(item.id);
+    setFormData({
+      nama: item.nama ?? item.nama_produk ?? '',
+      harga: String(item.harga ?? ''),
+      stok: String(item.stok ?? ''),
+      deskripsi: item.deskripsi ?? '',
+      gambar_url: item.gambar_url ?? '',
+      kategori_id: item.kategori_id ? String(item.kategori_id) : '',
+    });
+    setPreviewImage(item.gambar_url ?? null);
+    setIsModalOpen(true);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
@@ -246,12 +288,20 @@ export default function AdminPage() {
         payload.kategori_id = parseInt(formData.kategori_id, 10);
       }
 
-      await callAdminApi<{ message: string }>('/api/admin/products', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      });
+      if (editingProductId !== null) {
+        await callAdminApi<{ message: string }>(`/api/admin/products/${editingProductId}`, {
+          method: 'PATCH',
+          body: JSON.stringify(payload),
+        });
+        setSuccessMsg(`Berhasil memperbarui buket "${productName}"!`);
+      } else {
+        await callAdminApi<{ message: string }>('/api/admin/products', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+        setSuccessMsg(`Berhasil menambahkan buket "${productName}"!`);
+      }
 
-      setSuccessMsg(`Berhasil menambahkan buket "${productName}"!`);
       setFormData({
         nama: '',
         harga: '',
@@ -261,12 +311,13 @@ export default function AdminPage() {
         kategori_id: '',
       });
       setPreviewImage(null);
+      setEditingProductId(null);
       setIsModalOpen(false);
       void fetchData();
 
     } catch (err: unknown) {
-      console.error('Error adding product:', err);
-      const msg = getErrorMessage(err, 'Gagal menyimpan produk baru.');
+      console.error('Error saving product:', err);
+      const msg = getErrorMessage(err, editingProductId !== null ? 'Gagal menyimpan perubahan produk.' : 'Gagal menyimpan produk baru.');
       setErrorMsg(msg);
     } finally {
       setSubmitting(false);
@@ -293,8 +344,48 @@ export default function AdminPage() {
 
     } catch (err: unknown) {
       console.error('Error deleting product:', err);
-      const msg = err instanceof Error ? err.message : 'Gagal menghapus produk.';
+      const msg = getErrorMessage(err, 'Gagal menghapus produk.');
       setErrorMsg(msg);
+    }
+  };
+
+  const handleCategorySubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const nama = categoryNameInput.trim();
+    if (!nama) {
+      setErrorMsg('Nama kategori wajib diisi.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setErrorMsg(null);
+      const path = editingCategoryId === null ? '/api/admin/categories' : `/api/admin/categories/${editingCategoryId}`;
+      await callAdminApi<{ message: string }>(path, {
+        method: editingCategoryId === null ? 'POST' : 'PATCH',
+        body: JSON.stringify({ nama }),
+      });
+      setSuccessMsg(editingCategoryId === null ? `Kategori "${nama}" berhasil ditambahkan.` : `Kategori "${nama}" berhasil diperbarui.`);
+      setCategoryNameInput('');
+      setEditingCategoryId(null);
+      void fetchData();
+    } catch (err: unknown) {
+      setErrorMsg(getErrorMessage(err, 'Gagal menyimpan kategori.'));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCategoryDelete = async (category: Kategori) => {
+    const nama = getCategoryName(category);
+    if (!confirm(`Apakah kamu yakin ingin menghapus kategori "${nama}"?`)) return;
+    try {
+      setErrorMsg(null);
+      await callAdminApi<{ message: string }>(`/api/admin/categories/${category.id}`, { method: 'DELETE' });
+      setSuccessMsg(`Kategori "${nama}" berhasil dihapus.`);
+      void fetchData();
+    } catch (err: unknown) {
+      setErrorMsg(getErrorMessage(err, 'Gagal menghapus kategori.'));
     }
   };
 
@@ -362,11 +453,7 @@ export default function AdminPage() {
             </button>
 
             <button
-              onClick={() => {
-                setFormData({ nama: '', harga: '', stok: '', deskripsi: '', gambar_url: '', kategori_id: '' });
-                setPreviewImage(null);
-                setIsModalOpen(true);
-              }}
+              onClick={openAddModal}
               disabled={!isAuthenticated}
               className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#FF4696] text-white text-xs font-bold tracking-wide uppercase hover:bg-[#e03a83] active:scale-95 transition-all shadow-md shadow-pink-200"
             >
@@ -391,13 +478,41 @@ export default function AdminPage() {
               <div className="flex-1">
                 <p className="text-xs font-bold uppercase tracking-wide">Akses Admin Terkunci</p>
                 <p className="text-xs mt-1">Masukkan kunci admin untuk memuat data dan mengaktifkan operasi CRUD.</p>
-                <input
-                  type="password"
-                  value={adminKeyInput}
-                  onChange={(e) => setAdminKeyInput(e.target.value)}
-                  placeholder="Masukkan kunci admin dashboard"
-                  className="mt-3 w-full px-4 py-3 rounded-xl border-2 border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
-                />
+                <div className="mt-3 flex flex-col gap-3">
+                  <select
+                    value={loginRole}
+                    onChange={(e) => setLoginRole(e.target.value as 'admin' | 'founder')}
+                    className="px-4 py-3 rounded-xl border-2 border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
+                  >
+                    <option value="admin">Admin</option>
+                    <option value="founder">Founder</option>
+                  </select>
+
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <input
+                      type="text"
+                      value={adminUsernameInput}
+                      onChange={(e) => setAdminUsernameInput(e.target.value)}
+                      placeholder={loginRole === 'founder' ? 'Username founder' : 'Username admin'}
+                      className="flex-1 px-4 py-3 rounded-xl border-2 border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
+                    />
+                    <input
+                      type="password"
+                      value={adminPasswordInput}
+                      onChange={(e) => setAdminPasswordInput(e.target.value)}
+                      placeholder={loginRole === 'founder' ? 'Password founder' : 'Password admin'}
+                      className="flex-1 px-4 py-3 rounded-xl border-2 border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
+                    />
+                  </div>
+
+                  <input
+                    type="password"
+                    value={adminKeyInput}
+                    onChange={(e) => setAdminKeyInput(e.target.value)}
+                    placeholder="(Opsional) kunci legacy dashboard"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
+                  />
+                </div>
               </div>
               <button
                 onClick={handleAdminUnlock}
@@ -468,6 +583,36 @@ export default function AdminPage() {
             </div>
           </div>
         </div>
+
+        <section className="bg-white rounded-2xl border-2 border-pink-100 shadow-sm p-5 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+            <div>
+              <h2 className="font-heading-serif text-lg font-bold uppercase tracking-wide text-[#1E1033]">Manajemen Kategori</h2>
+              <p className="text-xs text-gray-500 mt-1">Tambah, ubah, dan hapus kategori katalog.</p>
+            </div>
+            <form onSubmit={handleCategorySubmit} className="flex w-full sm:w-auto gap-2">
+              <input
+                value={categoryNameInput}
+                onChange={(event) => setCategoryNameInput(event.target.value)}
+                placeholder={editingCategoryId === null ? 'Nama kategori baru' : 'Nama kategori'}
+                className="min-w-0 flex-1 sm:w-56 px-3 py-2.5 rounded-xl border-2 border-gray-200 text-xs focus:outline-none focus:border-[#FF4696]"
+                disabled={!isAuthenticated || submitting}
+              />
+              <button type="submit" disabled={!isAuthenticated || submitting} className="px-4 py-2.5 rounded-xl bg-[#FF4696] text-white text-xs font-bold uppercase disabled:opacity-50">
+                {editingCategoryId === null ? 'Tambah' : 'Update'}
+              </button>
+            </form>
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+            {kategoriList.map((category) => (
+              <div key={category.id} className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-pink-50 border border-pink-200 text-xs font-semibold text-[#1E1033]">
+                <span>{getCategoryName(category)}</span>
+                <button type="button" onClick={() => { setEditingCategoryId(category.id); setCategoryNameInput(getCategoryName(category)); }} disabled={!isAuthenticated} className="text-amber-600 hover:text-amber-800" title="Edit kategori"><Pencil className="w-3.5 h-3.5" /></button>
+                <button type="button" onClick={() => void handleCategoryDelete(category)} disabled={!isAuthenticated} className="text-red-500 hover:text-red-700" title="Hapus kategori"><Trash2 className="w-3.5 h-3.5" /></button>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* Product Table Container */}
         <div className="bg-white rounded-2xl border-2 border-pink-100 shadow-sm overflow-hidden">
@@ -546,13 +691,22 @@ export default function AdminPage() {
                           </span>
                         </td>
                         <td className="py-4 px-5 text-right">
-                          <button
-                            onClick={() => handleDelete(item.id, itemNama)}
-                            className="p-2.5 rounded-xl bg-white border border-red-200 text-red-500 hover:bg-red-50 hover:border-red-300 transition-all shadow-sm"
-                            title="Hapus Produk"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => openEditModal(item)}
+                              className="p-2.5 rounded-xl bg-white border border-amber-200 text-amber-600 hover:bg-amber-50 hover:border-amber-300 transition-all shadow-sm"
+                              title="Edit Produk"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(item.id, itemNama)}
+                              className="p-2.5 rounded-xl bg-white border border-red-200 text-red-500 hover:bg-red-50 hover:border-red-300 transition-all shadow-sm"
+                              title="Hapus Produk"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -578,13 +732,16 @@ export default function AdminPage() {
                 </div>
                 <div>
                   <h3 className="font-heading-serif text-xl font-bold uppercase tracking-wide">
-                    Tambah Buket Baru
+                    {editingProductId !== null ? 'Edit Buket' : 'Tambah Buket Baru'}
                   </h3>
-                  <p className="text-[10px] text-pink-200">Isi detail produk untuk ditambahkan ke katalog</p>
+                  <p className="text-[10px] text-pink-200">{editingProductId !== null ? 'Perbarui detail produk yang dipilih' : 'Isi detail produk untuk ditambahkan ke katalog'}</p>
                 </div>
               </div>
               <button 
-                onClick={() => setIsModalOpen(false)} 
+                onClick={() => {
+                  setEditingProductId(null);
+                  setIsModalOpen(false);
+                }}
                 className="p-1.5 rounded-xl bg-white/10 text-pink-200 hover:text-white hover:bg-white/20 transition-colors"
               >
                 <X className="w-5 h-5" />
@@ -736,7 +893,7 @@ export default function AdminPage() {
                   disabled={submitting}
                   className="px-6 py-3 rounded-xl bg-[#FF4696] text-white font-bold uppercase tracking-wide hover:bg-[#e03a83] active:scale-95 disabled:opacity-50 transition-all shadow-md shadow-pink-200"
                 >
-                  {submitting ? 'Menyimpan...' : 'Simpan Buket Baru'}
+                  {submitting ? 'Menyimpan...' : editingProductId !== null ? 'Update Produk' : 'Simpan Buket Baru'}
                 </button>
               </div>
 

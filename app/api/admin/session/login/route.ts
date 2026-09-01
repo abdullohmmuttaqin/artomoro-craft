@@ -1,11 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { enforceAdminRateLimit } from '@/lib/admin-rate-limit';
 import { writeAdminAuditLog } from '@/lib/admin-audit';
-import { createAdminSessionToken, setAdminSessionCookie } from '@/lib/admin-session';
+import { AdminSessionRole, createAdminSessionToken, setAdminSessionCookie } from '@/lib/admin-session';
 
 interface LoginBody {
   key?: string;
+  username?: string;
+  password?: string;
+  role?: AdminSessionRole;
 }
+
+const hasPasswordCredentials = (role: AdminSessionRole) => {
+  if (role === 'founder') {
+    return Boolean(process.env.FOUNDER_USERNAME && process.env.FOUNDER_PASSWORD);
+  }
+
+  return Boolean(process.env.ADMIN_USERNAME && process.env.ADMIN_PASSWORD);
+};
+
+const getPasswordCredentials = (role: AdminSessionRole) => {
+  if (role === 'founder') {
+    return {
+      username: process.env.FOUNDER_USERNAME?.trim(),
+      password: process.env.FOUNDER_PASSWORD?.trim(),
+    };
+  }
+
+  return {
+    username: process.env.ADMIN_USERNAME?.trim(),
+    password: process.env.ADMIN_PASSWORD?.trim(),
+  };
+};
 
 export async function POST(request: NextRequest) {
   const rateLimit = enforceAdminRateLimit(request, 'admin:session:login');
@@ -21,11 +46,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const configuredKey = process.env.ADMIN_DASHBOARD_KEY;
-  if (!configuredKey) {
-    return NextResponse.json({ message: 'ADMIN_DASHBOARD_KEY belum dikonfigurasi di server.' }, { status: 500 });
-  }
-
   let body: LoginBody;
   try {
     body = (await request.json()) as LoginBody;
@@ -33,28 +53,77 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: 'Body request tidak valid.' }, { status: 400 });
   }
 
+  const requestedRole = body.role === 'founder' ? 'founder' : 'admin';
+  const hasSubmittedPasswordCredentials = Boolean(body.username || body.password);
+  const isPasswordLogin = hasSubmittedPasswordCredentials && hasPasswordCredentials(requestedRole);
+
+  if (isPasswordLogin) {
+    const username = (body.username ?? '').trim();
+    const password = (body.password ?? '').trim();
+    const configured = getPasswordCredentials(requestedRole);
+
+    if (!username || !password) {
+      return NextResponse.json({ message: 'Username dan password wajib diisi.' }, { status: 400 });
+    }
+
+    if (configured.username !== username || configured.password !== password) {
+      writeAdminAuditLog(request, {
+        action: 'admin.auth.failed',
+        success: false,
+        details: { reason: 'Username/password mismatch', role: requestedRole },
+      });
+      return NextResponse.json({ message: 'Username atau password tidak valid.' }, { status: 401 });
+    }
+
+    try {
+      const token = createAdminSessionToken(requestedRole);
+      const response = NextResponse.json({ message: `Login ${requestedRole} berhasil.` });
+      setAdminSessionCookie(response, token);
+
+      writeAdminAuditLog(request, {
+        action: 'admin.session.login',
+        success: true,
+        details: { role: requestedRole },
+      });
+
+      return response;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Gagal membuat sesi admin.';
+      return NextResponse.json({ message }, { status: 500 });
+    }
+  }
+
+  const configuredKey = requestedRole === 'founder' ? process.env.FOUNDER_DASHBOARD_KEY : process.env.ADMIN_DASHBOARD_KEY;
+  if (!configuredKey) {
+    return NextResponse.json(
+      { message: `${requestedRole === 'founder' ? 'FOUNDER_DASHBOARD_KEY' : 'ADMIN_DASHBOARD_KEY'} belum dikonfigurasi di server.` },
+      { status: 500 },
+    );
+  }
+
   const submittedKey = (body.key ?? '').trim();
   if (!submittedKey) {
-    return NextResponse.json({ message: 'Kunci admin wajib diisi.' }, { status: 400 });
+    return NextResponse.json({ message: 'Kunci dashboard wajib diisi.' }, { status: 400 });
   }
 
   if (submittedKey !== configuredKey) {
     writeAdminAuditLog(request, {
       action: 'admin.auth.failed',
       success: false,
-      details: { reason: 'Dashboard key mismatch' },
+      details: { reason: 'Dashboard key mismatch', role: requestedRole },
     });
-    return NextResponse.json({ message: 'Kunci admin tidak valid.' }, { status: 401 });
+    return NextResponse.json({ message: 'Kunci dashboard tidak valid.' }, { status: 401 });
   }
 
   try {
-    const token = createAdminSessionToken();
-    const response = NextResponse.json({ message: 'Login admin berhasil.' });
+    const token = createAdminSessionToken(requestedRole);
+    const response = NextResponse.json({ message: `Login ${requestedRole} berhasil.` });
     setAdminSessionCookie(response, token);
 
     writeAdminAuditLog(request, {
       action: 'admin.session.login',
       success: true,
+      details: { role: requestedRole },
     });
 
     return response;

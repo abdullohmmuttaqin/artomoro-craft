@@ -3,7 +3,11 @@ import { NextRequest } from 'next/server';
 type AdminAuditAction =
   | 'admin.bootstrap'
   | 'admin.product.create'
+  | 'admin.product.update'
   | 'admin.product.delete'
+  | 'admin.category.create'
+  | 'admin.category.update'
+  | 'admin.category.delete'
   | 'admin.session.login'
   | 'admin.session.logout'
   | 'admin.auth.failed'
