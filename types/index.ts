@@ -18,6 +18,7 @@ export interface Produk {
   stok: number;
   gambar_url?: string;
   kategori_id?: number;
+  is_active?: boolean;
   created_at?: string;
 }
 
