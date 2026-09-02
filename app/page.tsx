@@ -331,7 +331,7 @@ export default function HomePage() {
                 </a>
 
                 <a 
-                  href="https://www.tiktok.com/@qetcil" 
+                  href="https://www.tiktok.com/@artomorocraftid" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white hover:bg-[#FF4696] transition-colors"
