@@ -246,7 +246,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <p className="font-bold text-xs uppercase text-[#1E1033]">WhatsApp Customer Service</p>
-                    <p className="text-[11px] text-gray-500">+62 838-4767-0338</p>
+                    <p className="text-[11px] text-gray-500">+{WHATSAPP_NUMBER}</p>
                   </div>
                 </div>
 

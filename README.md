@@ -75,15 +75,13 @@ ADMIN_PASSWORD=change-this-admin-password
 FOUNDER_USERNAME=founder
 FOUNDER_PASSWORD=change-this-founder-password
 
-ADMIN_DASHBOARD_KEY=change-this-admin-key
-FOUNDER_DASHBOARD_KEY=change-this-founder-key
 ADMIN_SESSION_SECRET=change-this-session-secret
 ADMIN_SESSION_TTL_SECONDS=28800
 ADMIN_RATE_LIMIT_MAX=30
 ADMIN_RATE_LIMIT_WINDOW_SECONDS=60
 ```
 
-`SUPABASE_SERVICE_ROLE_KEY`, password, dashboard key, dan session secret hanya boleh berada di server environment. Jangan expose atau commit `.env.local`.
+`SUPABASE_SERVICE_ROLE_KEY`, password, dan session secret hanya boleh berada di server environment. Jangan expose atau commit `.env.local`.
 
 ## Database Migration
 

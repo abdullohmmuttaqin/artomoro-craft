@@ -38,7 +38,6 @@ const getErrorMessage = (err: unknown, fallback: string) => {
 export default function AdminPage() {
   const [produkList, setProdukList] = useState<Produk[]>([]);
   const [kategoriList, setKategoriList] = useState<Kategori[]>([]);
-  const [adminKeyInput, setAdminKeyInput] = useState<string>('');
   const [adminUsernameInput, setAdminUsernameInput] = useState<string>('');
   const [adminPasswordInput, setAdminPasswordInput] = useState<string>('');
   const [loginRole, setLoginRole] = useState<'admin' | 'founder'>('admin');
@@ -132,27 +131,18 @@ export default function AdminPage() {
   }, [fetchData]);
 
   const handleAdminUnlock = async () => {
-    const trimmed = adminKeyInput.trim();
     const username = adminUsernameInput.trim();
     const password = adminPasswordInput.trim();
 
-    const hasPasswordLogin = username.length > 0 || password.length > 0;
-    const hasLegacyKey = trimmed.length > 0;
-
-    if (!hasPasswordLogin && !hasLegacyKey) {
-      setErrorMsg('Masukkan username/password atau kunci legacy untuk membuka dashboard.');
+    if (!username || !password) {
+      setErrorMsg('Username dan password wajib diisi.');
       return;
     }
 
     try {
       setLoading(true);
       setErrorMsg(null);
-      const payload = {
-        role: loginRole,
-        ...(hasPasswordLogin
-          ? { username, password }
-          : { key: trimmed }),
-      };
+      const payload = { role: loginRole, username, password };
 
       await callAdminApi<{ message: string }>('/api/admin/session/login', {
         method: 'POST',
@@ -180,7 +170,6 @@ export default function AdminPage() {
     }
 
     setIsAuthenticated(false);
-    setAdminKeyInput('');
     setAdminUsernameInput('');
     setAdminPasswordInput('');
     setProdukList([]);
@@ -522,13 +511,6 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  <input
-                    type="password"
-                    value={adminKeyInput}
-                    onChange={(e) => setAdminKeyInput(e.target.value)}
-                    placeholder="(Opsional) kunci legacy dashboard"
-                    className="w-full px-4 py-3 rounded-xl border-2 border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
-                  />
                 </div>
               </div>
               <button
