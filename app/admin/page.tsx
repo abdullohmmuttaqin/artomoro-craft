@@ -415,13 +415,13 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBFBFB] text-[#1E1033]">
+    <div className="min-h-screen bg-[var(--bg-base)] text-[#1E1033]">
       
       {/* Header Admin Bar */}
-      <header className="sticky top-0 z-40 bg-[#1E1033] text-white border-b-2 border-[#FF4696] shadow-md">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-[#1E1033] text-white border-b border-[#FF4696]/50 shadow-md">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-[4.5rem] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#FF4696] flex items-center justify-center text-white shadow-sm">
+            <div className="w-8 h-8 rounded-md bg-[#FF4696] flex items-center justify-center text-white shadow-sm">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
@@ -446,14 +446,14 @@ export default function AdminPage() {
       <main className="max-w-6xl mx-auto py-8 sm:py-10 px-4 sm:px-6 lg:px-8 space-y-8">
         
         {/* Title & Top Action Bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-pink-100 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-[#eadde5] shadow-sm">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-50 border border-pink-200 text-[#FF4696] text-xs font-bold tracking-wide mb-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[var(--bg-soft)] border border-[#eadde5] text-[#FF4696] text-[10px] font-bold tracking-[0.14em] uppercase mb-2">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Control Panel</span>
             </div>
-            <h1 className="font-heading-serif text-2xl sm:text-4xl font-bold uppercase tracking-wide text-[#1E1033]">
-              Manajemen <span className="font-brand-script text-3xl sm:text-5xl text-[#FF4696] normal-case">Katalog Buket</span>
+            <h1 className="font-heading-serif text-3xl sm:text-5xl font-semibold leading-none text-[#1E1033]">
+              Manajemen <span className="font-brand-script text-4xl sm:text-6xl text-[#FF4696] font-normal">katalog</span>
             </h1>
           </div>
 
@@ -463,7 +463,7 @@ export default function AdminPage() {
                 void fetchData();
               }}
               disabled={!isAuthenticated}
-              className="p-3 rounded-xl bg-white border-2 border-pink-100 text-gray-700 hover:border-[#FF4696] hover:text-[#FF4696] transition-all shadow-sm"
+              className="p-3 rounded-lg bg-white border border-[#eadde5] text-gray-700 hover:border-[#FF4696] hover:text-[#FF4696] transition-all"
               title="Refresh Data"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -472,7 +472,7 @@ export default function AdminPage() {
             <button
               onClick={openAddModal}
               disabled={!isAuthenticated}
-              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#FF4696] text-white text-xs font-bold tracking-wide uppercase hover:bg-[#e03a83] active:scale-95 transition-all shadow-md shadow-pink-200"
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-[#FF4696] text-white text-xs font-bold tracking-wide uppercase hover:bg-[#e03a83] active:scale-95 transition-all shadow-md shadow-pink-200"
             >
               <Plus className="w-4 h-4" />
               <span>Tambah Buket Baru</span>
@@ -481,7 +481,7 @@ export default function AdminPage() {
             {isAuthenticated && (
               <button
                 onClick={handleAdminLock}
-                className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-gray-200 text-gray-700 text-xs font-bold tracking-wide uppercase hover:border-red-200 hover:text-red-600 transition-all"
+                className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-[#eadde5] text-gray-700 text-xs font-bold tracking-wide uppercase hover:border-red-200 hover:text-red-600 transition-all"
               >
                 Kunci
               </button>
@@ -490,7 +490,7 @@ export default function AdminPage() {
         </div>
 
         {!isAuthenticated && (
-          <div className="p-4 sm:p-5 rounded-2xl bg-amber-50 border-2 border-amber-200 text-amber-900 shadow-sm">
+          <div className="p-4 sm:p-5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 shadow-sm">
             <div className="flex flex-col sm:flex-row sm:items-end gap-3">
               <div className="flex-1">
                 <p className="text-xs font-bold uppercase tracking-wide">Akses Admin Terkunci</p>
@@ -499,7 +499,7 @@ export default function AdminPage() {
                   <select
                     value={loginRole}
                     onChange={(e) => setLoginRole(e.target.value as 'admin' | 'founder')}
-                    className="px-4 py-3 rounded-xl border-2 border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
+                    className="px-4 py-3 rounded-lg border border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
                   >
                     <option value="admin">Admin</option>
                     <option value="founder">Founder</option>
@@ -511,14 +511,14 @@ export default function AdminPage() {
                       value={adminUsernameInput}
                       onChange={(e) => setAdminUsernameInput(e.target.value)}
                       placeholder={loginRole === 'founder' ? 'Username founder' : 'Username admin'}
-                      className="flex-1 px-4 py-3 rounded-xl border-2 border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
+                      className="flex-1 px-4 py-3 rounded-lg border border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
                     />
                     <input
                       type="password"
                       value={adminPasswordInput}
                       onChange={(e) => setAdminPasswordInput(e.target.value)}
                       placeholder={loginRole === 'founder' ? 'Password founder' : 'Password admin'}
-                      className="flex-1 px-4 py-3 rounded-xl border-2 border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
+                      className="flex-1 px-4 py-3 rounded-lg border border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
                     />
                   </div>
 
@@ -527,13 +527,13 @@ export default function AdminPage() {
                     value={adminKeyInput}
                     onChange={(e) => setAdminKeyInput(e.target.value)}
                     placeholder="(Opsional) kunci legacy dashboard"
-                    className="w-full px-4 py-3 rounded-xl border-2 border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
+                    className="w-full px-4 py-3 rounded-lg border border-amber-300 bg-white text-sm focus:outline-none focus:border-amber-500"
                   />
                 </div>
               </div>
               <button
                 onClick={handleAdminUnlock}
-                className="px-5 py-3 rounded-xl bg-amber-500 text-white text-xs font-bold tracking-wide uppercase hover:bg-amber-600 transition-all"
+                className="px-5 py-3 rounded-lg bg-amber-500 text-white text-xs font-bold tracking-wide uppercase hover:bg-amber-600 transition-all"
               >
                 Buka Dashboard
               </button>
@@ -560,8 +560,8 @@ export default function AdminPage() {
 
         {/* Overview Stat Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="bg-white p-5 rounded-2xl border-2 border-pink-100 shadow-sm flex items-center gap-4 hover:border-pink-300 transition-all">
-            <div className="w-12 h-12 rounded-xl bg-pink-50 border border-pink-200 text-[#FF4696] flex items-center justify-center shadow-inner">
+          <div className="bg-white p-5 rounded-xl border border-[#eadde5] shadow-sm flex items-center gap-4 hover:border-pink-300 transition-all">
+            <div className="w-11 h-11 rounded-lg bg-[var(--bg-soft)] border border-[#eadde5] text-[#FF4696] flex items-center justify-center">
               <Package className="w-6 h-6" />
             </div>
             <div>
@@ -570,8 +570,8 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border-2 border-pink-100 shadow-sm flex items-center gap-4 hover:border-pink-300 transition-all">
-            <div className="w-12 h-12 rounded-xl bg-purple-50 border border-purple-200 text-purple-600 flex items-center justify-center shadow-inner">
+          <div className="bg-white p-5 rounded-xl border border-[#eadde5] shadow-sm flex items-center gap-4 hover:border-pink-300 transition-all">
+            <div className="w-11 h-11 rounded-lg bg-purple-50 border border-purple-200 text-purple-600 flex items-center justify-center">
               <Layers className="w-6 h-6" />
             </div>
             <div>
@@ -580,8 +580,8 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border-2 border-pink-100 shadow-sm flex items-center gap-4 sm:col-span-2 lg:col-span-1 hover:border-pink-300 transition-all">
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center shadow-inner">
+          <div className="bg-white p-5 rounded-xl border border-[#eadde5] shadow-sm flex items-center gap-4 sm:col-span-2 lg:col-span-1 hover:border-pink-300 transition-all">
+            <div className="w-11 h-11 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center">
               <Sparkles className="w-6 h-6" />
             </div>
             <div>
@@ -601,10 +601,10 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <section className="bg-white rounded-2xl border-2 border-pink-100 shadow-sm p-5 sm:p-6">
+        <section className="bg-white rounded-xl border border-[#eadde5] shadow-sm p-5 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div>
-              <h2 className="font-heading-serif text-lg font-bold uppercase tracking-wide text-[#1E1033]">Manajemen Kategori</h2>
+              <h2 className="font-heading-serif text-xl font-semibold text-[#1E1033]">Manajemen Kategori</h2>
               <p className="text-xs text-gray-500 mt-1">Tambah, ubah, dan hapus kategori katalog.</p>
             </div>
             <form onSubmit={handleCategorySubmit} className="flex w-full sm:w-auto gap-2">
@@ -612,17 +612,17 @@ export default function AdminPage() {
                 value={categoryNameInput}
                 onChange={(event) => setCategoryNameInput(event.target.value)}
                 placeholder={editingCategoryId === null ? 'Nama kategori baru' : 'Nama kategori'}
-                className="min-w-0 flex-1 sm:w-56 px-3 py-2.5 rounded-xl border-2 border-gray-200 text-xs focus:outline-none focus:border-[#FF4696]"
+                className="min-w-0 flex-1 sm:w-56 px-3 py-2.5 rounded-lg border border-[#eadde5] text-xs focus:outline-none focus:border-[#FF4696]"
                 disabled={!isAuthenticated || submitting}
               />
-              <button type="submit" disabled={!isAuthenticated || submitting} className="px-4 py-2.5 rounded-xl bg-[#FF4696] text-white text-xs font-bold uppercase disabled:opacity-50">
+              <button type="submit" disabled={!isAuthenticated || submitting} className="px-4 py-2.5 rounded-lg bg-[#FF4696] text-white text-xs font-bold uppercase disabled:opacity-50">
                 {editingCategoryId === null ? 'Tambah' : 'Update'}
               </button>
             </form>
           </div>
           <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
             {kategoriList.map((category) => (
-              <div key={category.id} className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-pink-50 border border-pink-200 text-xs font-semibold text-[#1E1033]">
+              <div key={category.id} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg-soft)] border border-[#eadde5] text-xs font-semibold text-[#1E1033]">
                 <span>{getCategoryName(category)}</span>
                 <button type="button" onClick={() => { setEditingCategoryId(category.id); setCategoryNameInput(getCategoryName(category)); }} disabled={!isAuthenticated} className="text-amber-600 hover:text-amber-800" title="Edit kategori"><Pencil className="w-3.5 h-3.5" /></button>
                 <button type="button" onClick={() => void handleCategoryDelete(category)} disabled={!isAuthenticated} className="text-red-500 hover:text-red-700" title="Hapus kategori"><Trash2 className="w-3.5 h-3.5" /></button>
@@ -632,13 +632,13 @@ export default function AdminPage() {
         </section>
 
         {/* Product Table Container */}
-        <div className="bg-white rounded-2xl border-2 border-pink-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 bg-gradient-to-r from-pink-50/80 via-white to-pink-50/30 border-b-2 border-pink-100 flex items-center justify-between">
-            <h2 className="font-heading-serif text-lg font-bold uppercase tracking-wide text-[#1E1033] flex items-center gap-2">
+        <div className="bg-white rounded-xl border border-[#eadde5] shadow-sm overflow-hidden">
+          <div className="px-6 py-4 bg-[var(--bg-soft)] border-b border-[#eadde5] flex items-center justify-between">
+            <h2 className="font-heading-serif text-xl font-semibold text-[#1E1033] flex items-center gap-2">
               <Flower2 className="w-5 h-5 text-[#FF4696]" />
               <span>Daftar Buket Tersedia</span>
             </h2>
-            <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-white border border-pink-200 text-[#FF4696] shadow-sm">
+            <span className="text-xs font-extrabold px-3 py-1 rounded-md bg-white border border-[#eadde5] text-[#FF4696]">
               {produkList.length} Items Listed
             </span>
           </div>
