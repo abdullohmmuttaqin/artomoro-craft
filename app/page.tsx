@@ -45,34 +45,32 @@ export default function HomePage() {
     <main className="min-h-screen bg-[#FBFBFB] text-[#1E1033]">
       
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-8 pb-16 md:pt-16 md:pb-24 border-b border-pink-100/60">
+      <section className="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24 border-b border-[#eadde5] bg-[var(--bg-warm)]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             
             {/* Left Column: Copywriting & CTAs */}
-            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+            <div className="lg:col-span-7 space-y-7 text-center lg:text-left">
               
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-50 border border-pink-100 text-[#FF4696] text-xs font-bold tracking-wide">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#eadde5] text-[#FF4696] text-[11px] font-bold tracking-[0.14em] uppercase">
                 <Sparkles className="w-4 h-4 shrink-0" />
                 <span>Buket & Hantaran Eksklusif Cilacap</span>
               </div>
 
-              <h1 className="font-heading-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-wider leading-[1.15] text-[#1E1033] uppercase">
-                Let Your Feelings <br />
-                <span className="font-brand-script text-5xl sm:text-7xl lg:text-8xl text-[#FF4696] normal-case block pt-1">
-                  Blossom
-                </span>
+              <h1 className="font-heading-serif text-5xl sm:text-6xl lg:text-7xl font-semibold leading-[0.98] text-[#1E1033]">
+                Buket yang <span className="font-brand-script text-6xl sm:text-7xl lg:text-8xl text-[#FF4696] font-normal">berbicara</span>
+                <span className="block mt-2">untuk setiap momen.</span>
               </h1>
 
-              <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+              <p className="text-sm sm:text-base md:text-lg text-[#655e68] max-w-xl mx-auto lg:mx-0 leading-relaxed">
                 Hadirkan keindahan dalam setiap momen spesialmu dengan rangkaian buket kustom eksklusif dari <strong className="text-[#1E1033]">Artomoro Craft</strong>.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-2">
                 <Link
                   href="/katalog"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-[#FF4696] text-white text-sm font-bold tracking-wide uppercase hover:bg-[#e03a83] active:scale-95 transition-all shadow-md shadow-pink-200"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-lg bg-[#FF4696] text-white text-sm font-bold tracking-wide uppercase hover:bg-[#e03a83] active:scale-95 transition-all shadow-md shadow-pink-200"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>Lihat Katalog</span>
@@ -80,7 +78,7 @@ export default function HomePage() {
 
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-white border border-pink-200 text-[#1E1033] hover:border-[#FF4696] hover:text-[#FF4696] text-sm font-bold tracking-wide uppercase active:scale-95 transition-all shadow-sm"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-lg bg-white border border-[#eadde5] text-[#1E1033] hover:border-[#FF4696] hover:text-[#FF4696] text-sm font-bold tracking-wide uppercase active:scale-95 transition-all"
                 >
                   <MessageSquare className="w-4 h-4 text-[#FF4696]" />
                   <span>Pesan Kustom</span>
@@ -88,7 +86,7 @@ export default function HomePage() {
               </div>
 
               {/* Trust Badges Bar (Teks disesuaikan agar aman di HP sempit) */}
-              <div className="pt-6 border-t border-gray-100 grid grid-cols-3 gap-2 text-center lg:text-left">
+              <div className="pt-6 border-t border-[#eadde5] grid grid-cols-3 gap-2 text-center lg:text-left">
                 <div className="flex items-center justify-center lg:justify-start gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-semibold text-gray-700">
                   <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FF4696] shrink-0" />
                   <span>Cilacap Area</span>
@@ -107,32 +105,34 @@ export default function HomePage() {
 
             {/* Right Column: Visual Showcase */}
             <div className="lg:col-span-5 flex justify-center">
-              <div className="relative w-full max-w-md aspect-square rounded-3xl bg-gradient-to-br from-pink-100/80 via-white to-pink-50 p-6 sm:p-8 border border-pink-100 shadow-xl flex flex-col items-center justify-center text-center space-y-4">
+              <div className="relative w-full max-w-md aspect-[4/5] rounded-[2rem] bg-[#1E1033] p-6 sm:p-8 shadow-xl flex flex-col items-center justify-end text-center overflow-hidden">
                 
-                <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-[#1E1033] flex items-center justify-center text-[#FF4696] shadow-lg animate-pulse">
+                <div className="absolute inset-5 rounded-[1.5rem] border border-white/15 bg-[radial-gradient(circle_at_50%_35%,rgba(255,70,150,.55),transparent_32%),linear-gradient(145deg,#2c1748,#1e1033)]" aria-hidden="true" />
+
+                <div className="relative z-10 w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-[#FF4696] flex items-center justify-center text-[#1E1033] shadow-lg">
                   <Flower2 className="w-10 h-10 sm:w-14 sm:h-14" />
                 </div>
 
-                <div className="space-y-1">
-                  <h3 className="font-heading-serif text-xl sm:text-2xl font-bold text-[#1E1033] uppercase tracking-wide">
+                <div className="relative z-10 space-y-1 text-white">
+                  <h3 className="font-heading-serif text-xl sm:text-2xl font-semibold tracking-wide">
                     Fresh & Handcrafted
                   </h3>
-                  <p className="text-xs text-gray-500 max-w-xs leading-relaxed">
+                  <p className="text-xs text-pink-100/75 max-w-xs leading-relaxed">
                     Setiap tangkai dirangkai penuh kehangatan untuk menyampaikan perasaan terdalammu.
                   </p>
                 </div>
 
-                <div className="w-full bg-white/90 backdrop-blur-sm rounded-2xl p-3 border border-pink-100 flex items-center justify-between text-left shadow-sm">
+                <div className="relative z-10 w-full bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/15 flex items-center justify-between text-left">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-pink-50 flex items-center justify-center text-[#FF4696] font-bold text-xs">
+                    <div className="w-8 h-8 rounded-lg bg-[#FF4696] flex items-center justify-center text-[#1E1033] font-bold text-xs">
                       5.0
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-[#1E1033]">Kepuasan Pelanggan</p>
-                      <p className="text-[10px] text-gray-500">Ratusan buket terkirim di Cilacap</p>
+                      <p className="text-xs font-bold text-white">Kepuasan Pelanggan</p>
+                      <p className="text-[10px] text-pink-100/70">Ratusan buket terkirim di Cilacap</p>
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-[#FF4696] px-2 py-1 bg-pink-50 rounded-lg">
+                  <span className="text-xs font-bold text-[#FF4696] px-2 py-1 bg-white/10 rounded-lg">
                     ★ ★ ★ ★ ★
                   </span>
                 </div>

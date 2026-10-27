@@ -15,13 +15,13 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-[#FBFBFB]/90 border-b-2 border-[#FF4696]/20 shadow-sm transition-all">
+    <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-[#fffafc]/90 border-b border-[#eadde5] transition-all">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+        <div className="flex items-center justify-between h-[4.5rem] sm:h-20">
           
           {/* Logo & Brand Name */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#1E1033] flex items-center justify-center text-[#FF4696] shadow-md group-hover:scale-105 transition-transform duration-200">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-[#1E1033] flex items-center justify-center text-[#FF4696] shadow-md group-hover:scale-105 transition-transform duration-200">
               <Flower2 className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div className="flex flex-col">
@@ -38,25 +38,25 @@ export default function Navbar() {
           <nav className="hidden md:flex items-center gap-8">
             <Link 
               href="/" 
-              className="text-xs sm:text-sm font-semibold tracking-wide uppercase text-[#1E1033] hover:text-[#FF4696] transition-colors"
+              className="text-[11px] sm:text-xs font-semibold tracking-[0.12em] uppercase text-[#1E1033] hover:text-[#FF4696] transition-colors"
             >
               Beranda
             </Link>
             <Link 
               href="/katalog" 
-              className="text-xs sm:text-sm font-semibold tracking-wide uppercase text-[#1E1033] hover:text-[#FF4696] transition-colors"
+              className="text-[11px] sm:text-xs font-semibold tracking-[0.12em] uppercase text-[#1E1033] hover:text-[#FF4696] transition-colors"
             >
               Katalog Buket
             </Link>
             <Link 
               href="/#tentang" 
-              className="text-xs sm:text-sm font-semibold tracking-wide uppercase text-[#1E1033] hover:text-[#FF4696] transition-colors"
+              className="text-[11px] sm:text-xs font-semibold tracking-[0.12em] uppercase text-[#1E1033] hover:text-[#FF4696] transition-colors"
             >
               Tentang Kami
             </Link>
             <Link 
               href="/#kontak" 
-              className="text-xs sm:text-sm font-semibold tracking-wide uppercase text-[#1E1033] hover:text-[#FF4696] transition-colors"
+              className="text-[11px] sm:text-xs font-semibold tracking-[0.12em] uppercase text-[#1E1033] hover:text-[#FF4696] transition-colors"
             >
               Kontak WA
             </Link>
