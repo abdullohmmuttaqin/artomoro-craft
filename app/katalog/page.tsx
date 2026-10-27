@@ -111,27 +111,27 @@ export default function KatalogPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#FBFBFB] py-8 sm:py-12 px-4 sm:px-6 lg:px-8 text-[#1E1033]">
+    <main className="min-h-screen bg-[var(--bg-base)] py-10 sm:py-14 px-4 sm:px-6 lg:px-8 text-[#1E1033]">
       <div className="max-w-6xl mx-auto space-y-8">
 
         {/* Page Header */}
-        <div className="text-center space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-50 border border-pink-100 text-[#FF4696] text-xs font-bold tracking-wide">
+        <div className="space-y-3 max-w-2xl">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#eadde5] text-[#FF4696] text-[11px] font-bold tracking-[0.14em] uppercase">
             <Sparkles className="w-4 h-4 shrink-0" />
             <span>Koleksi Eksklusif Artomoro Craft</span>
           </div>
 
-          <h1 className="font-heading-serif text-3xl sm:text-5xl font-bold uppercase tracking-wider text-[#1E1033]">
-            Katalog Buket <span className="font-brand-script text-4xl sm:text-6xl text-[#FF4696] normal-case block sm:inline sm:ml-2">Pilihan</span>
+          <h1 className="font-heading-serif text-4xl sm:text-6xl font-semibold leading-none text-[#1E1033]">
+            Katalog <span className="font-brand-script text-5xl sm:text-7xl text-[#FF4696] font-normal">pilihan</span>
           </h1>
 
-          <p className="text-xs sm:text-sm text-gray-600 max-w-md mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#655e68] max-w-md leading-relaxed">
             Temukan rangkaian buket kustom indah yang siap menyempurnakan hari bahagiamu.
           </p>
         </div>
 
         {/* Search & Filter Controls Card */}
-        <div className="bg-white p-4 sm:p-6 rounded-3xl border-2 border-pink-100 shadow-sm space-y-4">
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[#eadde5] shadow-sm space-y-4">
           
           {/* Top Bar: Search Input & Price Dropdown */}
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
@@ -144,7 +144,7 @@ export default function KatalogPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari buket (contoh: mawar, wisuda, satin)..."
-                className="w-full pl-11 pr-10 py-3 rounded-2xl border-2 border-gray-100 focus:outline-none focus:border-[#FF4696] text-xs transition-all bg-gray-50/50"
+                className="w-full pl-11 pr-10 py-3 rounded-lg border border-[#eadde5] focus:outline-none focus:border-[#FF4696] text-xs transition-all bg-[#fffafc]"
               />
               {searchQuery && (
                 <button
@@ -161,7 +161,7 @@ export default function KatalogPage() {
               <select
                 value={priceRange}
                 onChange={(e) => setPriceRange(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-100 focus:outline-none focus:border-[#FF4696] text-xs font-semibold bg-gray-50/50 transition-all text-[#1E1033]"
+                className="w-full px-4 py-3 rounded-lg border border-[#eadde5] focus:outline-none focus:border-[#FF4696] text-xs font-semibold bg-[#fffafc] transition-all text-[#1E1033]"
               >
                 <option value="all">Semua Budget / Harga</option>
                 <option value="under100">Di bawah Rp 100.000</option>
@@ -173,13 +173,13 @@ export default function KatalogPage() {
           </div>
 
           {/* Bottom Bar: Category Tabs */}
-          <div className="flex items-center justify-start gap-2 overflow-x-auto pb-1 scrollbar-none pt-2 border-t border-gray-100">
+          <div className="flex items-center justify-start gap-2 overflow-x-auto pb-1 scrollbar-none pt-2 border-t border-[#eadde5]">
             <button
               onClick={() => setSelectedKategori('all')}
               className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wide whitespace-nowrap transition-all ${
                 selectedKategori === 'all'
                   ? 'bg-[#1E1033] text-white shadow-sm'
-                  : 'bg-gray-50 border border-gray-200 text-gray-700 hover:border-pink-300'
+                  : 'bg-gray-50 border border-[#eadde5] text-gray-700 hover:border-pink-300'
               }`}
             >
               Semua Kategori
@@ -192,7 +192,7 @@ export default function KatalogPage() {
                 className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wide whitespace-nowrap transition-all ${
                   selectedKategori === cat.id
                     ? 'bg-[#FF4696] text-white shadow-sm'
-                    : 'bg-gray-50 border border-gray-200 text-gray-700 hover:border-pink-300'
+                    : 'bg-[#fffafc] border border-[#eadde5] text-gray-700 hover:border-pink-300'
                 }`}
               >
                 {getCategoryName(cat)}
@@ -280,11 +280,11 @@ export default function KatalogPage() {
               return (
                 <div
                   key={item.id}
-                  className="group bg-white rounded-2xl border border-pink-100 p-4 shadow-sm hover:shadow-md hover:border-pink-200 transition-all flex flex-col justify-between"
+                  className="group bg-white rounded-xl border border-[#eadde5] p-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col justify-between"
                 >
                   <div className="space-y-3">
                     <Link href={`/katalog/${item.id}`} className="block">
-                      <div className="relative w-full aspect-square rounded-xl bg-pink-50 overflow-hidden flex items-center justify-center border border-pink-100">
+                      <div className="relative w-full aspect-[4/5] rounded-lg bg-[var(--bg-soft)] overflow-hidden flex items-center justify-center">
                         {item.gambar_url ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
                           <img
@@ -299,7 +299,7 @@ export default function KatalogPage() {
                           </div>
                         )}
 
-                        <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-lg bg-white/90 backdrop-blur-md text-[10px] font-bold text-[#1E1033] shadow-sm">
+                        <span className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-[#1E1033]/90 backdrop-blur-md text-[10px] font-bold text-white">
                           Stok: {item.stok}
                         </span>
                       </div>
@@ -307,17 +307,17 @@ export default function KatalogPage() {
 
                     <div className="space-y-1">
                       <Link href={`/katalog/${item.id}`} className="block">
-                        <h3 className="font-heading-serif text-lg font-bold text-[#1E1033] tracking-wide uppercase line-clamp-1 hover:text-[#FF4696] transition-colors">
+                        <h3 className="font-heading-serif text-xl font-semibold text-[#1E1033] leading-tight line-clamp-2 hover:text-[#FF4696] transition-colors">
                           {itemNama}
                         </h3>
                       </Link>
-                      <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed min-h-[2rem]">
+                      <p className="text-xs text-[#655e68] line-clamp-2 leading-relaxed min-h-[2rem]">
                         {item.deskripsi || 'Rangkaian buket kustom spesial dari bahan pilihan berkualitas.'}
                       </p>
                     </div>
                   </div>
 
-                  <div className="pt-4 mt-3 border-t border-gray-100 flex items-center justify-between gap-3">
+                  <div className="pt-4 mt-3 border-t border-[#eadde5] flex items-center justify-between gap-3">
                     <div>
                       <span className="text-[10px] text-gray-400 uppercase font-bold block">Harga</span>
                       <span className="text-base font-extrabold text-[#FF4696]">
@@ -327,7 +327,7 @@ export default function KatalogPage() {
 
                     <Link
                       href={`/katalog/${item.id}`}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-pink-50 border border-pink-200 text-[#FF4696] text-xs font-bold tracking-wide uppercase hover:bg-[#FF4696] hover:text-white active:scale-95 transition-all shadow-sm"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#1E1033] text-white text-xs font-bold tracking-wide uppercase hover:bg-[#FF4696] active:scale-95 transition-all"
                     >
                       <Eye className="w-3.5 h-3.5" />
                       <span>Detail</span>
