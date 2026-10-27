@@ -103,14 +103,14 @@ export default function DetailProdukPage({ params }: DetailPageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-[#FBFBFB] py-8 sm:py-12 px-4 sm:px-6 lg:px-8 text-[#1E1033]">
+    <main className="min-h-screen bg-[var(--bg-base)] py-10 sm:py-14 px-4 sm:px-6 lg:px-8 text-[#1E1033]">
       <div className="max-w-5xl mx-auto space-y-6">
 
         {/* Back Button */}
         <div>
           <Link
             href="/katalog"
-            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-600 hover:text-[#FF4696] transition-colors bg-white px-4 py-2.5 rounded-xl border border-pink-100 shadow-sm"
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-600 hover:text-[#FF4696] transition-colors bg-white px-4 py-2.5 rounded-lg border border-[#eadde5]"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Kembali ke Katalog</span>
@@ -142,11 +142,11 @@ export default function DetailProdukPage({ params }: DetailPageProps) {
 
         {/* Product Detail Content */}
         {!loading && !errorMsg && produk && (
-          <div className="bg-white rounded-3xl border-2 border-pink-100 shadow-sm overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0">
+          <div className="bg-white rounded-2xl border border-[#eadde5] shadow-sm overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0">
             
             {/* Left Column: Big Image Display */}
-            <div className="lg:col-span-6 bg-pink-50/50 p-6 sm:p-8 flex items-center justify-center border-b lg:border-b-0 lg:border-r border-pink-100">
-              <div className="relative w-full aspect-square max-w-md rounded-2xl bg-white border-2 border-pink-100 shadow-md overflow-hidden flex items-center justify-center">
+            <div className="lg:col-span-6 bg-[var(--bg-soft)] p-5 sm:p-8 flex items-center justify-center border-b lg:border-b-0 lg:border-r border-[#eadde5]">
+              <div className="relative w-full aspect-[4/5] max-w-md rounded-xl bg-white overflow-hidden flex items-center justify-center">
                 {produk.gambar_url ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
@@ -177,18 +177,18 @@ export default function DetailProdukPage({ params }: DetailPageProps) {
             </div>
 
             {/* Right Column: Information & Checkout Options */}
-            <div className="lg:col-span-6 p-6 sm:p-8 flex flex-col justify-between space-y-6">
+            <div className="lg:col-span-6 p-6 sm:p-10 flex flex-col justify-between space-y-6">
               
               <div className="space-y-4">
                 {/* Badge Category / Brand */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-50 border border-pink-200 text-[#FF4696] text-xs font-bold tracking-wide">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--bg-soft)] border border-[#eadde5] text-[#FF4696] text-[11px] font-bold tracking-[0.12em] uppercase">
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Artomoro Craft Premium</span>
                 </div>
 
                 {/* Product Title & Price */}
                 <div>
-                  <h1 className="font-heading-serif text-2xl sm:text-4xl font-bold uppercase tracking-wide text-[#1E1033]">
+                  <h1 className="font-heading-serif text-3xl sm:text-5xl font-semibold leading-tight text-[#1E1033]">
                     {itemNama}
                   </h1>
                   <p className="text-2xl sm:text-3xl font-extrabold text-[#FF4696] mt-2">
@@ -197,7 +197,7 @@ export default function DetailProdukPage({ params }: DetailPageProps) {
                 </div>
 
                 {/* Description */}
-                <div className="border-t border-b border-gray-100 py-3">
+                <div className="border-t border-b border-[#eadde5] py-4">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Deskripsi Produk</h3>
                   <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                     {produk.deskripsi || 'Rangkaian buket kustom indah yang dirangkai secara hand-crafted dengan bahan pilihan berkualitas tinggi.'}
@@ -212,11 +212,11 @@ export default function DetailProdukPage({ params }: DetailPageProps) {
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#1E1033] mb-2">
                       Jumlah Pesanan
                     </label>
-                    <div className="inline-flex items-center gap-3 bg-pink-50/60 p-1.5 rounded-xl border border-pink-200">
+                    <div className="inline-flex items-center gap-3 bg-[var(--bg-soft)] p-1.5 rounded-lg border border-[#eadde5]">
                       <button
                         onClick={() => setJumlah((prev) => Math.max(1, prev - 1))}
                         disabled={jumlah <= 1}
-                        className="w-8 h-8 rounded-lg bg-white border border-pink-200 flex items-center justify-center text-[#1E1033] hover:border-[#FF4696] disabled:opacity-40 transition-all font-bold"
+                        className="w-8 h-8 rounded-md bg-white border border-[#eadde5] flex items-center justify-center text-[#1E1033] hover:border-[#FF4696] disabled:opacity-40 transition-all font-bold"
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
@@ -226,7 +226,7 @@ export default function DetailProdukPage({ params }: DetailPageProps) {
                       <button
                         onClick={() => setJumlah((prev) => Math.min(produk.stok || 99, prev + 1))}
                         disabled={jumlah >= (produk.stok || 99)}
-                        className="w-8 h-8 rounded-lg bg-white border border-pink-200 flex items-center justify-center text-[#1E1033] hover:border-[#FF4696] disabled:opacity-40 transition-all font-bold"
+                        className="w-8 h-8 rounded-md bg-white border border-[#eadde5] flex items-center justify-center text-[#1E1033] hover:border-[#FF4696] disabled:opacity-40 transition-all font-bold"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
@@ -243,7 +243,7 @@ export default function DetailProdukPage({ params }: DetailPageProps) {
                       value={catatan}
                       onChange={(e) => setCatatan(e.target.value)}
                       placeholder="Contoh: Selamat Wisuda ya Sarah! Wish you all the best. - From Budi"
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-[#FF4696] text-xs transition-all"
+                      className="w-full px-4 py-3 rounded-lg border border-[#eadde5] focus:outline-none focus:border-[#FF4696] text-xs transition-all"
                     />
                   </div>
 
@@ -261,7 +261,7 @@ export default function DetailProdukPage({ params }: DetailPageProps) {
                   href={produk.stok > 0 ? `https://wa.me/${WHATSAPP_NUMBER}?text=${generateWaMessage()}` : '#'}
                   target={produk.stok > 0 ? '_blank' : '_self'}
                   rel="noopener noreferrer"
-                  className={`w-full inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-2xl text-white text-xs font-bold tracking-wide uppercase shadow-md transition-all ${
+                  className={`w-full inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-lg text-white text-xs font-bold tracking-wide uppercase shadow-md transition-all ${
                     produk.stok > 0
                       ? 'bg-[#FF4696] hover:bg-[#e03a83] active:scale-95 shadow-pink-200'
                       : 'bg-gray-300 cursor-not-allowed shadow-none'
