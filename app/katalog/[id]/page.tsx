@@ -103,7 +103,7 @@ export default function DetailProdukPage({ params }: DetailPageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-[var(--bg-base)] py-10 sm:py-14 px-4 sm:px-6 lg:px-8 text-[#1E1033]">
+    <main className="min-h-screen bg-[var(--bg-base)] py-10 pb-28 sm:py-14 sm:pb-14 px-4 sm:px-6 lg:px-8 text-[#1E1033]">
       <div className="max-w-5xl mx-auto space-y-6">
 
         {/* Back Button */}
@@ -278,6 +278,20 @@ export default function DetailProdukPage({ params }: DetailPageProps) {
         )}
 
       </div>
+
+      {!loading && !errorMsg && produk && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#eadde5] bg-white/95 p-3 shadow-[0_-8px_24px_rgba(30,16,51,0.12)] backdrop-blur sm:hidden">
+          <Link
+            href={produk.stok > 0 ? `https://wa.me/${WHATSAPP_NUMBER}?text=${generateWaMessage()}` : '#'}
+            target={produk.stok > 0 ? '_blank' : '_self'}
+            rel="noopener noreferrer"
+            className={`w-full inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3.5 text-xs font-bold uppercase tracking-wide text-white ${produk.stok > 0 ? 'bg-[#FF4696]' : 'bg-gray-300 pointer-events-none'}`}
+          >
+            <MessageSquare className="w-4 h-4" />
+            <span>{produk.stok > 0 ? 'Pesan via WhatsApp' : 'Stok Buket Habis'}</span>
+          </Link>
+        </div>
+      )}
     </main>
   );
 }

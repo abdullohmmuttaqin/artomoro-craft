@@ -246,7 +246,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <p className="font-bold text-xs uppercase text-[#1E1033]">WhatsApp Customer Service</p>
-                    <p className="text-[11px] text-gray-500">+62 838-4767-0338</p>
+                    <p className="text-[11px] text-gray-500">+{WHATSAPP_NUMBER}</p>
                   </div>
                 </div>
 
@@ -282,6 +282,35 @@ export default function HomePage() {
 
           </div>
 
+        </div>
+      </section>
+
+      {/* Cara Pemesanan WhatsApp */}
+      <section className="py-16 sm:py-20 bg-white border-b border-[#eadde5]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mb-8">
+            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#FF4696]">Cara pesan</p>
+            <h2 className="mt-2 font-heading-serif text-3xl sm:text-4xl font-semibold text-[#1E1033]">
+              Dari pilihanmu ke buket impian.
+            </h2>
+            <p className="mt-3 text-sm text-[#655e68] leading-relaxed">
+              Pesan langsung melalui WhatsApp. Tim kami membantu mengonfirmasi detail, ketersediaan, dan jadwal pengerjaan.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#eadde5] border border-[#eadde5] rounded-xl overflow-hidden">
+            {[
+              ['01', 'Pilih buket', 'Jelajahi katalog dan buka detail buket yang kamu suka.'],
+              ['02', 'Atur pesanan', 'Tentukan jumlah dan tambahkan catatan atau kartu ucapan.'],
+              ['03', 'Chat admin', 'Kirim detailnya ke WhatsApp untuk konfirmasi dan pembayaran.'],
+            ].map(([number, title, description]) => (
+              <div key={number} className="bg-[var(--bg-base)] p-6 sm:p-7">
+                <span className="font-heading-serif text-3xl text-[#FF4696]">{number}</span>
+                <h3 className="mt-4 font-heading-serif text-xl font-semibold text-[#1E1033]">{title}</h3>
+                <p className="mt-2 text-xs leading-relaxed text-[#655e68]">{description}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
