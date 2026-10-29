@@ -286,28 +286,36 @@ export default function HomePage() {
       </section>
 
       {/* Cara Pemesanan WhatsApp */}
-      <section className="py-16 sm:py-20 bg-white border-b border-[#eadde5]">
+      <section className="py-16 sm:py-24 bg-white border-b border-pink-100/60">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mx-auto mb-10 text-center">
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#FF4696]">Cara pesan</p>
-            <h2 className="mt-2 font-heading-serif text-3xl sm:text-4xl font-semibold text-[#1E1033]">
-              Dari pilihanmu ke buket impian.
+          <div className="text-center space-y-3 max-w-2xl mx-auto mb-12">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-50 border border-pink-100 text-[#FF4696] text-xs font-bold tracking-wide">
+              <MessageSquare className="w-4 h-4 shrink-0" />
+              <span>Cara Pemesanan</span>
+            </div>
+            <h2 className="font-heading-serif text-3xl sm:text-4xl font-bold uppercase tracking-wide text-[#1E1033]">
+              Dari pilihanmu ke <span className="font-brand-script text-4xl sm:text-5xl text-[#FF4696] normal-case">buket impian.</span>
             </h2>
-            <p className="mt-3 text-sm text-[#655e68] leading-relaxed">
+            <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
               Pesan langsung melalui WhatsApp. Tim kami membantu mengonfirmasi detail, ketersediaan, dan jadwal pengerjaan.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#eadde5] border border-[#eadde5] rounded-xl overflow-hidden max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
             {[
-              ['01', 'Pilih buket', 'Jelajahi katalog dan buka detail buket yang kamu suka.'],
-              ['02', 'Atur pesanan', 'Tentukan jumlah dan tambahkan catatan atau kartu ucapan.'],
-              ['03', 'Chat admin', 'Kirim detailnya ke WhatsApp untuk konfirmasi dan pembayaran.'],
-            ].map(([number, title, description]) => (
-              <div key={number} className="bg-[var(--bg-base)] p-6 sm:p-7 text-center">
-                <span className="font-heading-serif text-3xl text-[#FF4696]">{number}</span>
-                <h3 className="mt-4 font-heading-serif text-xl font-semibold text-[#1E1033]">{title}</h3>
-                <p className="mt-2 text-xs leading-relaxed text-[#655e68]">{description}</p>
+              ['01', 'Pilih buket', 'Jelajahi katalog dan buka detail buket yang kamu suka.', 'bag'],
+              ['02', 'Atur pesanan', 'Tentukan jumlah dan tambahkan catatan atau kartu ucapan.', 'sparkle'],
+              ['03', 'Chat admin', 'Kirim detailnya ke WhatsApp untuk konfirmasi dan pembayaran.', 'message'],
+            ].map(([number, title, description, icon]) => (
+              <div key={number} className="p-6 sm:p-7 rounded-2xl bg-[#FBFBFB] border-2 border-pink-100 text-center space-y-3 hover:border-pink-300 transition-all">
+                <div className="w-12 h-12 rounded-2xl bg-pink-50 text-[#FF4696] flex items-center justify-center mx-auto shadow-inner">
+                  {icon === 'bag' && <ShoppingBag className="w-5 h-5" />}
+                  {icon === 'sparkle' && <Sparkles className="w-5 h-5" />}
+                  {icon === 'message' && <MessageSquare className="w-5 h-5" />}
+                </div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#FF4696]">Langkah {number}</div>
+                <h3 className="font-heading-serif text-xl font-bold text-[#1E1033] uppercase">{title}</h3>
+                <p className="text-xs leading-relaxed text-gray-500">{description}</p>
               </div>
             ))}
           </div>
