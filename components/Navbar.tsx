@@ -9,6 +9,16 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
+  const handleHomeClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    setIsOpen(false);
+
+    if (pathname !== '/') return;
+
+    event.preventDefault();
+    window.history.replaceState(null, '', '/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   // Jika sedang berada di Halaman Admin, Sembunyikan Navbar Customer Ini!
   if (pathname?.startsWith('/admin')) {
     return null;
@@ -38,6 +48,7 @@ export default function Navbar() {
           <nav className="hidden md:flex items-center gap-8">
             <Link 
               href="/" 
+              onClick={handleHomeClick}
               className="text-[11px] sm:text-xs font-semibold tracking-[0.12em] uppercase text-[#1E1033] hover:text-[#FF4696] transition-colors"
             >
               Beranda
@@ -87,7 +98,7 @@ export default function Navbar() {
       {/* Mobile Dropdown */}
       {isOpen && (
         <div className="md:hidden bg-[#FBFBFB] border-b border-pink-100 px-4 pt-3 pb-6 space-y-3">
-          <Link href="/" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-semibold uppercase text-[#1E1033] hover:bg-pink-50 hover:text-[#FF4696]">
+          <Link href="/" onClick={handleHomeClick} className="block px-3 py-2 rounded-lg text-sm font-semibold uppercase text-[#1E1033] hover:bg-pink-50 hover:text-[#FF4696]">
             Beranda
           </Link>
           <Link href="/katalog" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-semibold uppercase text-[#1E1033] hover:bg-pink-50 hover:text-[#FF4696]">
